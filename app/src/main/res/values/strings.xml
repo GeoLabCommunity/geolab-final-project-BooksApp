@@ -3,7 +3,13 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="facebook_app_id">984640668262403</string>
-    <string name="login">შესვლა</string>
+    <string name="login">ავტორიზაცია</string>
+    <string name="logout">გამოსვლა</string>
+    <string name="login_success">ავტორიზაცია დასრულდა წარმატებით</string>
+    <string name="logout_success">პროფილი დატოვეთ წარმატებით</string>
     <string name="drawer_open">მენიუ ღიაა</string>
     <string name="drawer_close">მენიუ დახურულია</string>
+    <string name="facebook_connection_error">CONNECTION_FAILURE: CONNECTION_FAILURE</string>
+    <string name="fb_connectiion_error_snackbar_msg">საჭიროა კავშირი ინტერნეტთან</string>
+    <string name="fb_error_snackbar_msg">დაფიქსირდა შეცდომა</string>
 </resources>

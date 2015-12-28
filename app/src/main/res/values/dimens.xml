@@ -5,4 +5,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="drawer_header_height">190dp</dimen>
+    <dimen name="profile_pic_width">76dp</dimen>
+    <dimen name="profile_pic_start_margin">24dp</dimen>
+    <dimen name="username_top_margin">8dp</dimen>
+    <dimen name="add_layout_second_column_left_margin">15dp</dimen>
 </resources>

@@ -34,7 +34,6 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -113,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
 
         if(checkUserLoginStatus()){
-
+                Intent intent=new Intent(this,AddBookActivity.class);
+                startActivity(intent);
 
         }
     }

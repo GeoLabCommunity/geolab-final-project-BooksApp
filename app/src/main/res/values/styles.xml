@@ -26,7 +26,11 @@
         <item name="android:textColor">@color/colorAccent</item>
     </style>
     <style name="add_book_text">
+    <item name="android:textSize">13sp</item>
+   </style>
+    <style name="add_book_input">
         <item name="android:textSize">13sp</item>
+        <item name="android:inputType">textEmailAddress</item>
     </style>
     <style name="fab_menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>

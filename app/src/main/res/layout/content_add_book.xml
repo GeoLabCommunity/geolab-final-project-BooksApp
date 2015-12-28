@@ -18,6 +18,18 @@
            android:shrinkColumns="1"
            android:stretchColumns="1">
            <TableRow>
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="@string/type_of_ad"
+                   style="@style/add_book_text"/>
+               <Spinner
+                   android:id="@+id/ad_type"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="@dimen/add_layout_second_column_left_margin"/>
+           </TableRow>
+           <TableRow>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
-            style="@style/add_book_text"
+            style="@style/add_book_input"
             />
            </TableRow>
        <TableRow>
@@ -42,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
-            style="@style/add_book_text"
+            style="@style/add_book_input"
             />
         </TableRow>
            <TableRow>
@@ -83,7 +95,22 @@
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
-                   style="@style/add_book_text"
+                   style="@style/add_book_input"
+                   />
+           </TableRow>
+           <TableRow>
+               <TextView
+                   android:id="@+id/exchange_text"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="@string/exchange_in_what"
+                   style="@style/add_book_text"/>
+               <EditText
+                   android:id="@+id/input_exchange_in"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                   style="@style/add_book_input"
                    />
            </TableRow>
            <TextView
@@ -96,14 +123,14 @@
                <ImageView
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:src="@drawable/email"
-                   android:layout_marginTop="10dp"/>
+                   android:layout_marginTop="10dp"
+                   android:src="@drawable/email"/>
                <EditText
                    android:id="@+id/input_email"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:inputType="textEmailAddress"
                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                   android:inputType="textEmailAddress"
                    style="@style/add_book_text"
                    />
            </TableRow>
@@ -152,4 +179,9 @@
         android:background="@drawable/rounded_edittext"
         style="@style/add_book_text"
         />
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="submit"/>
 </LinearLayout>

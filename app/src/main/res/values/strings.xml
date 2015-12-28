@@ -16,11 +16,13 @@
     <string name="add_picture">სურათის დამატება</string>
     <string name="gallery">გალერეა</string>
     <string name="camera">კამერა</string>
+    <string name="type_of_ad">განცხადების ტიპი</string>
     <string name="book_title">წიგნის დასახელება</string>
     <string name="author">ავტორი</string>
     <string name="condition">მდგომარეობა</string>
     <string name="category">კატეგორია</string>
     <string name="location">ადგილმდებარეობა</string>
+    <string name="exchange_in_what">რაში იცვლება</string>
     <string name="short_description">მოკლე აღწერა</string>
     <string name="contact_information">საკონტაქტო ინფრომაცია</string>
     <string-array name="category_array">
@@ -36,5 +38,9 @@
     <string-array name="condition_array">
         <item>ახალი</item>
         <item>ძველი</item>
+    </string-array>
+    <string-array name="ad_type_array">
+        <item>ვცვლი</item>
+        <item>ვეძებ</item>
     </string-array>
 </resources>

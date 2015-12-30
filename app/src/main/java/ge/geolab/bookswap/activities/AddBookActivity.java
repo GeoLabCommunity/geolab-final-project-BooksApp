@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -38,12 +39,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.Book;
+import ge.geolab.bookswap.network.UploadFileToServer;
 import ge.geolab.bookswap.utils.BookCamera;
 import ge.geolab.bookswap.utils.UnitConverters;
 
@@ -63,10 +67,13 @@ public class AddBookActivity extends AppCompatActivity {
     @Bind(R.id.add_from_gallery) FloatingActionButton fabGallery;
     @Bind(R.id.submit) Button button;
     @Bind(R.id.pic_container) LinearLayout picContainer;
+    @Bind(R.id.txtPercentage) TextView txtPercentage;
+    @Bind(R.id.progressBar) ProgressBar progressBar;
     private Uri fileUri;
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
     private Book bookAd=new Book();
+    private HashMap<Integer,File> pictureMap=new HashMap<>();
     private ArrayList<File> pictureArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,13 +172,24 @@ public class AddBookActivity extends AppCompatActivity {
     private void createBook(){
         //String title="",author="",description="";
         String id= Profile.getCurrentProfile().getId();
-        String title=String.valueOf(inputTitle.getText());
+        String title=inputTitle.getText().toString();
+        System.out.println("*****"+title);
         String description=String.valueOf(inputDescription.getText());
         String author=String.valueOf(inputAuthor.getText());
         String exchangeItem=String.valueOf(inputExchange.getText());
         String location=String.valueOf(inputLocation.getText());
         String email=String.valueOf(inputEmail.getText());
         String mobileNum=String.valueOf(inputMobileNum.getText());
+        pictureArray=new ArrayList<>(pictureMap.values());
+        bookAd.setAuthor(author);
+        bookAd.setId(id);
+        bookAd.setTitle(title);
+        bookAd.setDescription(description);
+        bookAd.setExchangeItem(exchangeItem);
+        bookAd.setLocation(location);
+        bookAd.seteMail(email);
+        bookAd.setMobileNum(mobileNum);
+        bookAd.setPictures(pictureArray);
 
     }
     private boolean validateFields(){
@@ -212,16 +230,22 @@ public class AddBookActivity extends AppCompatActivity {
             fileUri = savedInstanceState.getParcelable("file_uri");
         }
     }
+    private int id=0;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1 && resultCode==RESULT_OK && data!=null){
-            Uri selectedImage=data.getData();
+                Uri selectedImage=data.getData();
+                id++;
+                File file=new File(getRealPathFromURI(selectedImage));
+                pictureMap.put(id,file);
                 final ImageView imageView=setPicture(selectedImage);
+                imageView.setId(id);
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         removePicture(imageView);
+                        pictureMap.remove(imageView.getId());
                     }
                 });
                 picContainer.addView(imageView);
@@ -231,10 +255,14 @@ public class AddBookActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
 
                     final ImageView imageView=setPicture(fileUri);
+                    id++;
+                    imageView.setId(id);
+                    pictureMap.put(id,new File(fileUri.getPath()));
                     imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             removePicture(imageView);
+                            pictureMap.remove(imageView.getId());
                         }
                     });
                     picContainer.addView(imageView);
@@ -296,5 +324,21 @@ public class AddBookActivity extends AppCompatActivity {
             return imageView;
 
 
+    }
+    @OnClick(R.id.submit)
+    public void onSubmit(View view){
+         createBook();
+          new UploadFileToServer(this,bookAd,progressBar,txtPercentage).execute();
+    }
+    public String getRealPathFromURI (Uri contentUri) {
+        String path = null;
+        String[] proj = { MediaStore.MediaColumns.DATA };
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            path = cursor.getString(column_index);
+        }
+        cursor.close();
+        return path;
     }
 }

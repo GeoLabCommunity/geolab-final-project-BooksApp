@@ -6,6 +6,7 @@ import java.util.ArrayList;
 /**
  * Created by dalkh on 28-Dec-15.
  */
+
 public class Book {
     private String id,title,author,description,adType,category,condition,location,exchangeItem,mobileNum,eMail;
     private ArrayList<File> pictures;
@@ -124,5 +125,13 @@ public class Book {
         this.eMail=eMail;
         this.pictures=pictureArray;
 
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

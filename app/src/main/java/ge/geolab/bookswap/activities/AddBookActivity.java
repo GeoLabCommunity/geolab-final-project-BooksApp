@@ -3,19 +3,28 @@ package ge.geolab.bookswap.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -38,6 +47,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -50,8 +60,10 @@ import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.network.UploadFileToServer;
 import ge.geolab.bookswap.utils.BookCamera;
 import ge.geolab.bookswap.utils.UnitConverters;
+import ge.geolab.bookswap.views.customViews.RecycleBinView;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class AddBookActivity extends AppCompatActivity {
+public class AddBookActivity extends AppCompatActivity implements View.OnTouchListener {
     @Bind(R.id.input_book_title) EditText inputTitle;
     @Bind(R.id.input_book_description) EditText inputDescription;
     @Bind(R.id.input_author) EditText inputAuthor;
@@ -63,12 +75,12 @@ public class AddBookActivity extends AppCompatActivity {
     @Bind(R.id.ad_type) Spinner adTypeSpinner;
     @Bind(R.id.category_spinner) Spinner categorySpinner;
     @Bind(R.id.book_condition_spinner) Spinner bookConditionSpinner;
+    @Bind(R.id.fab) FloatingActionsMenu fab;
     @Bind(R.id.add_from_camera) FloatingActionButton fabCamera;
     @Bind(R.id.add_from_gallery) FloatingActionButton fabGallery;
     @Bind(R.id.submit) Button button;
     @Bind(R.id.pic_container) LinearLayout picContainer;
-    @Bind(R.id.txtPercentage) TextView txtPercentage;
-    @Bind(R.id.progressBar) ProgressBar progressBar;
+    @Bind(R.id.recycle_bin) RecycleBinView recycleBin;
     private Uri fileUri;
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -82,8 +94,78 @@ public class AddBookActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.slide_down);
+        Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.slide_up);
+        recycleBin.setInAnimation(slide_down);
+        recycleBin.setOutAnimation(slide_up);
+            recycleBin.setOnDragListener(new View.OnDragListener() {
+                @Override
+                public boolean onDrag(View v, DragEvent event) {
+                    int action = event.getAction();
+                    View view = (View) event.getLocalState();
+
+                    switch (action) {
+                        case DragEvent.ACTION_DRAG_STARTED:
+                            v.setVisibility(View.VISIBLE);
+                            v.invalidate();
+                            break;
+                        case DragEvent.ACTION_DRAG_ENTERED:
+                            v.setBackgroundColor(getResources().getColor(R.color.transparent_red));
+                            v.invalidate();
+                            break;
+                        case DragEvent.ACTION_DRAG_EXITED:
+                            v.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
+                            v.invalidate();
+                            break;
+                        case DragEvent.ACTION_DROP:
+
+                            ViewGroup owner = (ViewGroup) view.getParent();
+                            view.getId();
+                            //removing picture from container and HashMap
+                            pictureMap.remove(view.getId());
+                            owner.removeView(view);
+                                 v.setVisibility(View.GONE);
+                                v.invalidate();
+                    /*LinearLayout container = (LinearLayout) layoutview;
+                    container.setVisibility(View.VISIBLE);*/
+                            //view.setVisibility(View.VISIBLE);
+                            return true;
+                        case DragEvent.ACTION_DRAG_ENDED:
+                            Log.d("DRAG", "Drag ended");
+                            if (dropEventNotHandled(event)){
+                                view.setVisibility(View.VISIBLE);
+                                view.invalidate();
+                            }
+                            v.setVisibility(View.GONE);
+                            v.invalidate();
+                             break;
+                        default:
+                            Log.d("DRAG", "unknown drop");
+                            return false;
+
+                    }
+                    return true;
+                }
+
+                private boolean dropEventNotHandled(DragEvent dragEvent) {
+                    return !dragEvent.getResult();
+                }
+            });
 
 
+        inputDescription.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                if(event.getResult()){
+                View view = (View) event.getLocalState();
+                view.setVisibility(View.VISIBLE);
+                view.invalidate();
+                }
+                return true;
+            }
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getIntent();
         addSpinner(R.array.ad_type_array,adTypeSpinner);
@@ -91,6 +173,12 @@ public class AddBookActivity extends AppCompatActivity {
         addSpinner(R.array.condition_array,bookConditionSpinner);
         setSpinnerListeners();
     }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     @OnClick(R.id.add_from_gallery)
     public void onClickGallery(View view){
         /*if( validateFields() )
@@ -120,12 +208,12 @@ public class AddBookActivity extends AppCompatActivity {
                 if(position==1){
                     exchangeText.setVisibility(View.GONE);
                     inputExchange.setVisibility(View.GONE);
-                    bookAd.setAdType(parent.getAdapter().getItem(1).toString());
+                    bookAd.setAdType(""+position);
 
                 }else {
                     exchangeText.setVisibility(View.VISIBLE);
                     inputExchange.setVisibility(View.VISIBLE);
-                    bookAd.setAdType(parent.getAdapter().getItem(0).toString());
+                    bookAd.setAdType(""+position);
                 }
             }
 
@@ -138,7 +226,7 @@ public class AddBookActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                    bookAd.setCondition(parent.getAdapter().getItem(position).toString());
+                    bookAd.setCondition(""+position);
 
             }
 
@@ -195,15 +283,16 @@ public class AddBookActivity extends AppCompatActivity {
     private boolean validateFields(){
         ArrayList<Boolean> validChecks=new ArrayList<>();
         if( inputTitle.getText().toString().length() == 0 ) {
-            inputTitle.setError("First name is required!");
+            inputTitle.setError(getString(R.string.validate_title));
             validChecks.add(false);
         }
-        if( inputAuthor.getText().toString().length() == 0 ) {
-            inputAuthor.setError("First name is required!");
+        if(bookAd.getAdType().equals("0") && bookAd.getPictures().isEmpty()){
+            Snackbar.make(fab,getString(R.string.validate_pictures),Snackbar.LENGTH_LONG).show();
             validChecks.add(false);
         }
+
         if(inputExchange.getVisibility()==View.VISIBLE && inputExchange.getText().toString().length() == 0){
-            inputExchange.setError("First name is required!");
+            inputExchange.setError(getString(R.string.validate_exchange_item));
             validChecks.add(false);
         }
         for (int i = 0; i <validChecks.size() ; i++) {
@@ -241,13 +330,7 @@ public class AddBookActivity extends AppCompatActivity {
                 pictureMap.put(id,file);
                 final ImageView imageView=setPicture(selectedImage);
                 imageView.setId(id);
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        removePicture(imageView);
-                        pictureMap.remove(imageView.getId());
-                    }
-                });
+                 imageView.setOnTouchListener(this);
                 picContainer.addView(imageView);
 
         }
@@ -258,13 +341,7 @@ public class AddBookActivity extends AppCompatActivity {
                     id++;
                     imageView.setId(id);
                     pictureMap.put(id,new File(fileUri.getPath()));
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            removePicture(imageView);
-                            pictureMap.remove(imageView.getId());
-                        }
-                    });
+                     imageView.setOnTouchListener(this);
                     picContainer.addView(imageView);
 
 
@@ -309,7 +386,7 @@ public class AddBookActivity extends AppCompatActivity {
             e.printStackTrace();
             }
             final Bitmap bitmapImage = BitmapFactory.decodeStream(is, null , options);
-
+                  ;
            // Bitmap bitmapImage=MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri);
         /*    ByteArrayOutputStream stream=new ByteArrayOutputStream();
             bitmapImage.compress(Bitmap.CompressFormat.PNG,60,stream);
@@ -327,9 +404,13 @@ public class AddBookActivity extends AppCompatActivity {
     }
     @OnClick(R.id.submit)
     public void onSubmit(View view){
-         createBook();
-          new UploadFileToServer(this,bookAd,progressBar,txtPercentage).execute();
+        createBook();
+        if(validateFields()) {
+
+            new UploadFileToServer(this, bookAd).execute();
+        }
     }
+
     public String getRealPathFromURI (Uri contentUri) {
         String path = null;
         String[] proj = { MediaStore.MediaColumns.DATA };
@@ -341,4 +422,18 @@ public class AddBookActivity extends AppCompatActivity {
         cursor.close();
         return path;
     }
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+            ClipData data = ClipData.newPlainText("", "");
+            View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+            view.startDrag(data, shadowBuilder, view, 0);
+            view.setVisibility(View.INVISIBLE);
+            recycleBin.setVisibility(View.VISIBLE);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

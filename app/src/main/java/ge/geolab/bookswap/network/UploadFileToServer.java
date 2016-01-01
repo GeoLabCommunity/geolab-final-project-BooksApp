@@ -1,9 +1,12 @@
 package ge.geolab.bookswap.network;
 
+
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -33,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ge.geolab.bookswap.R;
+import ge.geolab.bookswap.activities.MainActivity;
 import ge.geolab.bookswap.models.Book;
 
 /**
@@ -41,32 +46,34 @@ import ge.geolab.bookswap.models.Book;
 public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
     long totalSize=0;
     Book book;
-    ProgressBar progressBar;
-    TextView txtPercentage;
     Context context;
-    public UploadFileToServer(Context context,Book book, ProgressBar progressBar,TextView txtPercentage) {
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    int id = 1;
+
+    public UploadFileToServer(Context context,Book book) {
         this.book=book;
         this.context=context;
-        this.progressBar=progressBar;
-        this.txtPercentage=txtPercentage;
     }
     @Override
     protected void onPreExecute() {
         // setting progress bar to zero
-        this.progressBar.setProgress(0);
+        mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setContentTitle("ატვირთვა")
+                .setContentText("მიმდინარეობს ატვირთვა")
+                .setSmallIcon(R.drawable.ic_upload)
+                .setProgress(100,0,false);
+        mNotifyManager.notify(id, mBuilder.build());
+       // this.progressBar.setProgress(0);
         super.onPreExecute();
     }
 
     @Override
     protected void onProgressUpdate(Integer... progress) {
-        // Making progress bar visible
-        this.progressBar.setVisibility(View.VISIBLE);
 
-        // updating progress bar value
-        this.progressBar.setProgress(progress[0]);
-
-        // updating percentage value
-        this.txtPercentage.setText(String.valueOf(progress[0]) + "%");
+        mBuilder.setProgress(100, progress[0], false);
+        mNotifyManager.notify(id, mBuilder.build());
     }
 
     @Override
@@ -113,10 +120,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
             entity.addPart("mobile_number",new StringBody(this.book.getMobileNum(),ContentType.APPLICATION_JSON));
             entity.addPart("description",new StringBody(this.book.getDescription(),ContentType.APPLICATION_JSON));
 
-            // Extra parameters if you want to pass to server
-         /*   entity.addPart("title",
-                    new StringBody(titleInput.getText().toString()));
-            entity.addPart("description", new StringBody(descriptionInput.getEditableText().toString()));*/
+
 
             totalSize = entity.getContentLength();
             httppost.setEntity(entity);
@@ -131,7 +135,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
                 // Server response
                 responseString = EntityUtils.toString(r_entity);
             } else {
-                responseString = "Error occurred! Http Status Code: "
+                responseString = "Error ! Http Status Code: "
                         + statusCode;
             }
 
@@ -151,7 +155,12 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 
         // showing the server response in an alert dialog
         try {
-            showAlert(result);
+            JSONObject jsonResponse=new JSONObject(result);
+
+            mBuilder.setContentText(jsonResponse.getString("message"));
+            // Removes the progress bar
+            mBuilder.setProgress(0, 0, false);
+            mNotifyManager.notify(id, mBuilder.build());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -159,23 +168,5 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         super.onPostExecute(result);
     }
 
-
-
-    /**
-     * Method to show alert dialog
-     * */
-    private void showAlert(String message) throws JSONException {
-        JSONObject jsonResponse=new JSONObject(message);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
-        builder.setMessage(jsonResponse.getString("message")).setTitle("")
-                .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // do nothing
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
 
 }

@@ -14,6 +14,22 @@
         >
         <include layout="@layout/content_add_book" />
     </android.support.v4.widget.NestedScrollView>
+    <ge.geolab.bookswap.views.customViews.RecycleBinView
+        android:id="@+id/recycle_bin"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="vertical"
+        android:gravity="top"
+        android:background="@color/transparent_gray"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_delete"/>
+    </ge.geolab.bookswap.views.customViews.RecycleBinView>
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,4 +77,5 @@
             fab:fab_icon="@drawable/ic_camera"
             fab:fab_colorPressed="@color/white_pressed"/>
       </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
 </android.support.design.widget.CoordinatorLayout>

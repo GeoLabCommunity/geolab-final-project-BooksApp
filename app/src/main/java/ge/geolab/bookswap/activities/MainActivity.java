@@ -49,6 +49,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.User;
 import ge.geolab.bookswap.views.adapters.MainActivityPagerAdapter;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -107,7 +108,10 @@ public class MainActivity extends AppCompatActivity {
         setUserUI();
 
     }
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
     @OnClick(R.id.fab)
     public void onClick(View view) {
 

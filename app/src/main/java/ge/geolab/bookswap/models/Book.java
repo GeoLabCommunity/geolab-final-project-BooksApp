@@ -1,15 +1,16 @@
 package ge.geolab.bookswap.models;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by dalkh on 28-Dec-15.
  */
 
-public class Book {
+public class Book implements Serializable{
     private String id,title,author,description,adType,category,condition,location,exchangeItem,mobileNum,eMail;
-    private ArrayList<File> pictures;
+    private ArrayList<String> pictures;
     public Book(){}
 
     public String getTitle() {
@@ -72,11 +73,11 @@ public class Book {
         this.eMail = eMail;
     }
 
-    public ArrayList<File> getPictures() {
+    public ArrayList<String> getPictures() {
         return pictures;
     }
 
-    public void setPictures(ArrayList<File> pictures) {
+    public void setPictures(ArrayList<String> pictures) {
         this.pictures = pictures;
     }
 
@@ -111,7 +112,7 @@ public class Book {
                 String exchangeItem,
                 String mobileNum,
                 String eMail,
-                ArrayList<File> pictureArray){
+                ArrayList<String> pictureArray){
         this.id=id;
         this.author=author;
         this.title=title;

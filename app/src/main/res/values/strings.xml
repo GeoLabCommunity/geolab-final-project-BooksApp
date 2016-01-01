@@ -6,6 +6,7 @@
     <string name="FILE_UPLOAD_URL">http://192.168.56.1/geolabclass/welcome/upload</string>
     <string name="login">ავტორიზაცია</string>
     <string name="logout">გამოსვლა</string>
+    <string name="profile">პირადი კაბინეტი</string>
     <string name="login_success">ავტორიზაცია დასრულდა წარმატებით</string>
     <string name="logout_success">პროფილი დატოვეთ წარმატებით</string>
     <string name="drawer_open">მენიუ ღიაა</string>
@@ -30,14 +31,12 @@
     <string name="validate.exchange_item">საჭიროა გასაცვლელი წიგნის დასახელება</string>
     <string name="validate.pictures">საჭიროა ერთი სურათი მაინც</string>
     <string-array name="category_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>მხატვრული ლიტერატურა</item>
+        <item>სკოლის წიგნები</item>
+        <item>საუნივერსიტეტო წიგნები</item>
+        <item>ლექსიკონები</item>
+        <item>კონსპექტები</item>
+        <item>კომიქსები</item>
     </string-array>
     <string-array name="condition_array">
         <item>ახალი</item>

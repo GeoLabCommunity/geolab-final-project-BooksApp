@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/categories_menu"
+        android:checkableBehavior="single">
 
-    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/literature"
+            android:checked="false"
+            android:icon="@drawable/ic_quill"
+            android:title="მხატვრული ლიტერატურა" />
+
+
+
+
+    </group>
+    <group android:checkableBehavior="none">
 
         <item
             android:id="@+id/login"
             android:checked="false"
+            android:icon="@drawable/ic_fb"
+            android:checkable="false"
             android:title="@string/login" />
+        <item
+            android:id="@+id/profile"
+            android:checked="false"
+            android:icon="@drawable/ic_profile"
+            android:checkable="false"
+            android:title="@string/profile" />
 
 
 

@@ -1,10 +1,14 @@
 package ge.geolab.bookswap.network;
 
 
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -60,7 +64,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         // setting progress bar to zero
         mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setContentTitle("ატვირთვა")
+        mBuilder.setContentTitle("")
                 .setContentText("მიმდინარეობს ატვირთვა")
                 .setSmallIcon(R.drawable.ic_upload)
                 .setProgress(100,0,false);
@@ -103,10 +107,10 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
                     });
 
 
-            ArrayList<File> bookArray=this.book.getPictures();
+            ArrayList<String> bookArray=this.book.getPictures();
             // Adding file data to http body
             for (int i = 0; i <bookArray.size() ; i++) {
-                entity.addPart("image[]", new FileBody(bookArray.get(i)));
+                entity.addPart("image[]", new FileBody(new File(bookArray.get(i))));
             }
             entity.addPart("user_id",new StringBody(this.book.getId(),ContentType.APPLICATION_JSON));
             entity.addPart("title",new StringBody(this.book.getTitle(),ContentType.create("text/plain", HTTP.UTF_8)));
@@ -154,15 +158,30 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         Log.e("TAG", "Response from server: " + result);
 
         // showing the server response in an alert dialog
-        try {
-            JSONObject jsonResponse=new JSONObject(result);
+        if(result.charAt(0)=='{') {
+            try {
+                JSONObject jsonResponse = new JSONObject(result);
 
-            mBuilder.setContentText(jsonResponse.getString("message"));
+                mBuilder.setContentText(jsonResponse.getString("message"));
+                // Removes the progress bar
+                mBuilder.setProgress(0, 0, false);
+                mNotifyManager.notify(id, mBuilder.build());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            Intent intent=new Intent(context,UploadRetryReceiver.class);
+            intent.putExtra("book",this.book);
+          /*  ArrayList<String> arrayList=new ArrayList<>();
+            arrayList.add("davigaleee");
+            intent.putStringArrayListExtra("picList",arrayList);*/
+            PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentText("სერვერთან კავშირი არ დამყარდა");
             // Removes the progress bar
             mBuilder.setProgress(0, 0, false);
+            mBuilder.addAction(R.drawable.ic_retry, "სცადეთ თავიდან", pIntent);
+            mBuilder.setAutoCancel(true);
             mNotifyManager.notify(id, mBuilder.build());
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
         super.onPostExecute(result);

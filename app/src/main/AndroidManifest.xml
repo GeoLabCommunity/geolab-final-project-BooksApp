@@ -44,6 +44,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ge.geolab.bookswap.activities.MainActivity" />
         </activity>
+        <receiver android:name=".network.UploadRetryReceiver" android:enabled="true">
+        </receiver>
     </application>
 
 </manifest>

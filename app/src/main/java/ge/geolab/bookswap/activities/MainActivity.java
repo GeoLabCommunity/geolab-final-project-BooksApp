@@ -147,13 +147,13 @@ public class MainActivity extends AppCompatActivity {
         if(AccessToken.getCurrentAccessToken()!=null){
             Picasso.with(this).load("https://graph.facebook.com/"+Profile.getCurrentProfile().getId()+"/picture?type=large").into(userPicture);
             fbUserNameTextView.setText(Profile.getCurrentProfile().getName());
-            navigationView.getMenu().getItem(0).setTitle(getString(R.string.logout));
+            navigationView.getMenu().getItem(1).setTitle(getString(R.string.logout));
         }
     }
     private void clearUserUI(){
         userPicture.setImageResource(android.R.color.transparent);
         fbUserNameTextView.setText("");
-        navigationView.getMenu().getItem(0).setTitle(R.string.login);
+        navigationView.getMenu().getItem(1).setTitle(R.string.login);
     }
     private void createDrawerButton(){
         /**
@@ -197,8 +197,9 @@ public class MainActivity extends AppCompatActivity {
 
 
                 //Checking if the item is in checked state or not, if not make it in checked state
-                if (menuItem.isChecked()) menuItem.setChecked(false);
-                else menuItem.setChecked(true);
+
+                    if (menuItem.isChecked()) menuItem.setChecked(false);
+                    else menuItem.setChecked(true);
 
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();

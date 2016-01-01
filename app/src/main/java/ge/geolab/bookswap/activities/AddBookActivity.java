@@ -85,8 +85,8 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
     private Book bookAd=new Book();
-    private HashMap<Integer,File> pictureMap=new HashMap<>();
-    private ArrayList<File> pictureArray;
+    private HashMap<Integer,String> pictureMap=new HashMap<>();
+    private ArrayList<String> pictureArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,6 +127,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
                             pictureMap.remove(view.getId());
                             owner.removeView(view);
                                  v.setVisibility(View.GONE);
+                            v.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
                                 v.invalidate();
                     /*LinearLayout container = (LinearLayout) layoutview;
                     container.setVisibility(View.VISIBLE);*/
@@ -136,6 +137,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
                             Log.d("DRAG", "Drag ended");
                             if (dropEventNotHandled(event)){
                                 view.setVisibility(View.VISIBLE);
+                                v.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
                                 view.invalidate();
                             }
                             v.setVisibility(View.GONE);
@@ -261,7 +263,6 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
         //String title="",author="",description="";
         String id= Profile.getCurrentProfile().getId();
         String title=inputTitle.getText().toString();
-        System.out.println("*****"+title);
         String description=String.valueOf(inputDescription.getText());
         String author=String.valueOf(inputAuthor.getText());
         String exchangeItem=String.valueOf(inputExchange.getText());
@@ -326,8 +327,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
         if(requestCode==1 && resultCode==RESULT_OK && data!=null){
                 Uri selectedImage=data.getData();
                 id++;
-                File file=new File(getRealPathFromURI(selectedImage));
-                pictureMap.put(id,file);
+                pictureMap.put(id,getRealPathFromURI(selectedImage));
                 final ImageView imageView=setPicture(selectedImage);
                 imageView.setId(id);
                  imageView.setOnTouchListener(this);
@@ -340,7 +340,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
                     final ImageView imageView=setPicture(fileUri);
                     id++;
                     imageView.setId(id);
-                    pictureMap.put(id,new File(fileUri.getPath()));
+                    pictureMap.put(id,fileUri.getPath());
                      imageView.setOnTouchListener(this);
                     picContainer.addView(imageView);
 
@@ -408,6 +408,9 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
         if(validateFields()) {
 
             new UploadFileToServer(this, bookAd).execute();
+            Intent intent=new Intent(this,MainActivity.class);
+            finish();
+            startActivity(intent);
         }
     }
 

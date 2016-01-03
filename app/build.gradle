@@ -56,4 +56,5 @@ dependencies {
     }
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    compile 'com.github.erd:android-volley:1.0.0'
 }

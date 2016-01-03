@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 
 public class Book implements Serializable{
-    private String id,title,author,description,adType,category,condition,location,exchangeItem,mobileNum,eMail;
+    private String id,title,author,description,adType,category,condition,location,exchangeItem,mobileNum,eMail,frontImageUrl;
     private ArrayList<String> pictures;
     public Book(){}
 
@@ -101,6 +101,14 @@ public class Book implements Serializable{
         this.description = description;
     }
 
+    public String getFrontImageUrl() {
+        return frontImageUrl;
+    }
+
+    public void setFrontImageUrl(String frontImageUrl) {
+        this.frontImageUrl = frontImageUrl;
+    }
+
     public Book(String id,
                 String title,
                 String author,
@@ -112,6 +120,7 @@ public class Book implements Serializable{
                 String exchangeItem,
                 String mobileNum,
                 String eMail,
+                String frontImageUrl,
                 ArrayList<String> pictureArray){
         this.id=id;
         this.author=author;
@@ -124,7 +133,9 @@ public class Book implements Serializable{
         this.exchangeItem=exchangeItem;
         this.mobileNum=mobileNum;
         this.eMail=eMail;
+
         this.pictures=pictureArray;
+        this.frontImageUrl=frontImageUrl;
 
     }
 

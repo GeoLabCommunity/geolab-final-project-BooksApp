@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         FacebookSdk.sdkInitialize(getApplicationContext());
-
+        //set transition animation
+        overridePendingTransition(R.anim.slide_down, R.anim.slide_out_right);
 
 
         accessTokenTracker = new AccessTokenTracker() {

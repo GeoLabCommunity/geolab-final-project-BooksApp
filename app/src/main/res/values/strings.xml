@@ -30,6 +30,8 @@
     <string name="validate.title">საჭიროა წიგნის დასახელება</string>
     <string name="validate.exchange_item">საჭიროა გასაცვლელი წიგნის დასახელება</string>
     <string name="validate.pictures">საჭიროა ერთი სურათი მაინც</string>
+    <string name="list_array_url">http://192.168.1.100/geolabclass/welcome/select</string>
+    <string name="picture_url">http://192.168.1.100/geolabclass/uploads/</string>
     <string-array name="category_array">
         <item>მხატვრული ლიტერატურა</item>
         <item>სკოლის წიგნები</item>

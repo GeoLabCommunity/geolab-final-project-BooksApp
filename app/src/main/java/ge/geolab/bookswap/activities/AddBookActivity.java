@@ -94,6 +94,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
         Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.slide_down);
         Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),

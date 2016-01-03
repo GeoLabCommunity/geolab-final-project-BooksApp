@@ -63,7 +63,7 @@ import ge.geolab.bookswap.utils.UnitConverters;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class AddBookActivity extends AppCompatActivity implements View.OnTouchListener {
+public class AddBookActivity extends AppCompatActivity implements View.OnLongClickListener {
     @Bind(R.id.input_book_title) EditText inputTitle;
     @Bind(R.id.input_book_description) EditText inputDescription;
     @Bind(R.id.input_author) EditText inputAuthor;
@@ -331,7 +331,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
                 pictureMap.put(id,getRealPathFromURI(selectedImage));
                 final ImageView imageView=setPicture(selectedImage);
                 imageView.setId(id);
-                 imageView.setOnTouchListener(this);
+                 imageView.setOnLongClickListener(this);
                 picContainer.addView(imageView);
 
         }
@@ -342,7 +342,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
                     id++;
                     imageView.setId(id);
                     pictureMap.put(id,fileUri.getPath());
-                     imageView.setOnTouchListener(this);
+                     imageView.setOnLongClickListener(this);
                     picContainer.addView(imageView);
 
 
@@ -427,17 +427,15 @@ public class AddBookActivity extends AppCompatActivity implements View.OnTouchLi
         return path;
     }
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+    public boolean onLongClick(View view) {
+
             ClipData data = ClipData.newPlainText("", "");
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-            view.startDrag(data, shadowBuilder, view, 0);
+            view.startDrag(data, shadowBuilder,view, 0);
             view.setVisibility(View.INVISIBLE);
             recycleBin.setVisibility(View.VISIBLE);
             return true;
-        } else {
-            return false;
-        }
+
     }
 
 }

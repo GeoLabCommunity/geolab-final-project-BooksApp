@@ -25,6 +25,7 @@
     <string name="category">კატეგორია</string>
     <string name="location">ადგილმდებარეობა</string>
     <string name="exchange_in_what">რაში იცვლება *</string>
+    <string name="exchange">რაში იცვლება</string>
     <string name="short_description">მოკლე აღწერა</string>
     <string name="contact_information">საკონტაქტო ინფრომაცია</string>
     <string name="validate.title">საჭიროა წიგნის დასახელება</string>
@@ -32,6 +33,7 @@
     <string name="validate.pictures">საჭიროა ერთი სურათი მაინც</string>
     <string name="list_array_url">http://192.168.1.100/geolabclass/welcome/select</string>
     <string name="picture_url">http://192.168.1.100/geolabclass/uploads/</string>
+    <string name="details_of_book">წიგნის დეტალური დახასიათება</string>
     <string-array name="category_array">
         <item>მხატვრული ლიტერატურა</item>
         <item>სკოლის წიგნები</item>
@@ -48,4 +50,5 @@
         <item>ვცვლი</item>
         <item>ვეძებ</item>
     </string-array>
+    <string name="title_activity_details">DetailsActivity</string>
 </resources>

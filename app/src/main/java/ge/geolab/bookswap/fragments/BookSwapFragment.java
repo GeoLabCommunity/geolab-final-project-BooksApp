@@ -1,6 +1,7 @@
 package ge.geolab.bookswap.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -33,6 +34,7 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import ge.geolab.bookswap.R;
+import ge.geolab.bookswap.activities.DetailsActivity;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.views.adapters.BookAdListAdapter;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
@@ -76,7 +78,7 @@ public class BookSwapFragment extends Fragment {
         ButterKnife.bind(this,rootView);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
         StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(columns,1);
-        Context context=getActivity().getApplicationContext();
+        final Context context=getActivity().getApplicationContext();
         requestQueue= Volley.newRequestQueue(context);
         bookAdListView.setLayoutManager(gridLayoutManager);
           bookAdList=new ArrayList<>();
@@ -87,6 +89,14 @@ public class BookSwapFragment extends Fragment {
             public void onRefresh() {
                 fetchJsonData(requestQueue, jsonArrayUrl, bookAdList, adapter, refreshLayout);
 
+            }
+        });
+        adapter.setOnItemClickListener(new BookAdListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+               Intent intent=new Intent(context, DetailsActivity.class);
+                intent.putExtra("book",bookAdList.get(position));
+                startActivity(intent);
             }
         });
         /*TextView textView = (TextView) rootView.findViewById(R.id.section_label);

@@ -11,5 +11,8 @@
     <dimen name="profile_pic_start_margin">24dp</dimen>
     <dimen name="username_top_margin">8dp</dimen>
     <dimen name="add_layout_second_column_left_margin">15dp</dimen>
+    <dimen   name="image_slider_height">200dp</dimen>
+    <dimen name="details_cardview_margin_top">5dp</dimen>
+    <dimen name="details_view_margin_top">10dp</dimen>
     <integer name="gallery_columns">2</integer>
 </resources>

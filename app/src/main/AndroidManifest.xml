@@ -3,10 +3,12 @@
     package="ge.geolab.bookswap">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
+
     <application
         android:name=".BookSwapApplication"
         android:allowBackup="true"
@@ -44,8 +46,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ge.geolab.bookswap.activities.MainActivity" />
         </activity>
-        <receiver android:name=".network.UploadRetryReceiver" android:enabled="true">
-        </receiver>
+
+        <receiver
+            android:name=".network.UploadRetryReceiver"
+            android:enabled="true"></receiver>
+
+        <activity
+            android:name=".activities.DetailsActivity"
+            android:label="@string/title_activity_details"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ge.geolab.bookswap.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

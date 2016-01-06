@@ -22,18 +22,30 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <style name="TextAppearence.App.TextInputLayout" parent="@android:style/TextAppearance">
         <item name="android:textColor">@color/colorAccent</item>
     </style>
+
     <style name="add_book_text">
-    <item name="android:textSize">13sp</item>
-   </style>
+        <item name="android:textSize">13sp</item>
+    </style>
+
     <style name="add_book_input">
         <item name="android:textSize">13sp</item>
         <item name="android:inputType">textEmailAddress</item>
     </style>
+
     <style name="fab_menu_labels_style">
         <item name="android:background">@drawable/fab_label_background</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="username_text">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="book_title_style">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
     </style>
 </resources>

@@ -11,8 +11,10 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
+import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
@@ -23,6 +25,8 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -53,9 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Book book= (Book) getIntent().getSerializableExtra("book");
-        TextSliderView textSliderView=new TextSliderView(this);
-        textSliderView.image("http://192.168.1.100/geolabclass/uploads/"+book.getFrontImageUrl()).setScaleType(BaseSliderView.ScaleType.CenterCrop);
-        imageSlider.addSlider(textSliderView);
+           imageSlider.setCustomIndicator((PagerIndicator) findViewById(R.id.custom_indicator));
         setData(book);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -65,6 +67,13 @@ public class DetailsActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
     private void setData(Book book){
+        ArrayList<String> imgArray=book.getPictures();
+        for (int i = 0; i <imgArray.size() ; i++) {
+            DefaultSliderView textSliderView=new DefaultSliderView(this);
+            textSliderView.image("http://192.168.1.100/geolabclass/uploads/"+imgArray.get(i)).setScaleType(BaseSliderView.ScaleType.CenterInside);
+            imageSlider.addSlider(textSliderView);
+
+        }
         titleView.setText(book.getTitle());
         authorView.setText(book.getAuthor());
         conditionView.setText(book.getCondition());
@@ -96,5 +105,11 @@ public class DetailsActivity extends AppCompatActivity {
                 }
         ).executeAsync();
 
+    }
+
+    @Override
+    protected void onStop() {
+        imageSlider.stopAutoCycle();
+        super.onStop();
     }
 }

@@ -94,9 +94,11 @@ public class BookSwapFragment extends Fragment {
         adapter.setOnItemClickListener(new BookAdListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-               Intent intent=new Intent(context, DetailsActivity.class);
-                intent.putExtra("book",bookAdList.get(position));
-                startActivity(intent);
+                if(!bookAdList.isEmpty()) {
+                    Intent intent = new Intent(context, DetailsActivity.class);
+                    intent.putExtra("book", bookAdList.get(position));
+                    startActivity(intent);
+                }
             }
         });
         /*TextView textView = (TextView) rootView.findViewById(R.id.section_label);
@@ -166,9 +168,21 @@ public class BookSwapFragment extends Fragment {
                 obj = jsonArray.getJSONObject(i);
 
                 Book bookObject=new Book();
+                bookObject.setAuthor(obj.getString("author"));
                 bookObject.setTitle(obj.getString("title"));
-
-                bookObject.setFrontImageUrl( obj.getJSONArray("img").getString(0));
+                bookObject.setLocation(obj.getString("location"));
+                bookObject.setExchangeItem(obj.getString("item"));
+                bookObject.seteMail(obj.getString("email"));
+                bookObject.setMobileNum(obj.getString("mobile"));
+                JSONArray imgArrayJSON=obj.getJSONArray("img");
+                ArrayList<String> imgArray=new ArrayList<>();
+                for (int k= 0; k <imgArrayJSON.length() ; k++) {
+                    imgArray.add(imgArrayJSON.getString(k));
+                    if(k==0){
+                        bookObject.setFrontImageUrl(imgArrayJSON.getString(0));
+                    }
+                }
+                bookObject.setPictures(imgArray);
                 bookObject.setId(obj.getString("user_id"));
                 list.add(bookObject);
 

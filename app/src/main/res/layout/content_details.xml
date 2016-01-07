@@ -16,11 +16,17 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/image_slider_height"
         />
+    <com.daimajia.slider.library.Indicators.PagerIndicator
+        android:id="@+id/custom_indicator"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/slider"
+        style="@style/AndroidImageSlider_Magnifier_Oval_Black"
+        />
     <android.support.v7.widget.CardView
         android:id="@+id/content_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/slider"
+        android:layout_below="@id/custom_indicator"
         android:layout_marginTop="@dimen/details_cardview_margin_top">
 
 

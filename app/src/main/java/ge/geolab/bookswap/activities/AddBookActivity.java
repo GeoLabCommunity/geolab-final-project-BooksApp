@@ -95,8 +95,6 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        Toast.makeText(this,getIntent().getStringExtra("userId"),Toast.LENGTH_LONG).show();
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
         Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.slide_down);

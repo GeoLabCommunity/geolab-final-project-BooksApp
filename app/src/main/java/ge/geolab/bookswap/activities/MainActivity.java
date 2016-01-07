@@ -118,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(checkUserLoginStatus()){
                 Intent intent=new Intent(this,AddBookActivity.class);
+            intent.putExtra("userId",Profile.getCurrentProfile().getId());
                 startActivity(intent);
 
         }
@@ -319,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
                             request.executeAsync();
                              logged[0]=true;
                              setUserUI();
+
                             Snackbar.make(fab, getString(R.string.login_success), Snackbar.LENGTH_LONG)
                                     .show();
                         }

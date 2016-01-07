@@ -167,7 +167,9 @@ public class BookSwapFragment extends Fragment {
 
                 Book bookObject=new Book();
                 bookObject.setTitle(obj.getString("title"));
-                bookObject.setFrontImageUrl(obj.getString("imgname"));
+
+                bookObject.setFrontImageUrl( obj.getJSONArray("img").getString(0));
+                bookObject.setId(obj.getString("user_id"));
                 list.add(bookObject);
 
             } catch (JSONException e) {

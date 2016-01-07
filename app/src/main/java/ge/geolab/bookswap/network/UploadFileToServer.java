@@ -112,7 +112,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
             for (int i = 0; i <bookArray.size() ; i++) {
                 entity.addPart("image[]", new FileBody(new File(bookArray.get(i))));
             }
-            entity.addPart("user_id",new StringBody(this.book.getId(),ContentType.APPLICATION_JSON));
+            entity.addPart("user_id",new StringBody(this.book.getId()));
             entity.addPart("title",new StringBody(this.book.getTitle(),ContentType.create("text/plain", HTTP.UTF_8)));
             entity.addPart("author",new StringBody(this.book.getAuthor(),ContentType.APPLICATION_JSON));
             entity.addPart("ad_type",new StringBody(this.book.getAdType(),ContentType.APPLICATION_JSON));

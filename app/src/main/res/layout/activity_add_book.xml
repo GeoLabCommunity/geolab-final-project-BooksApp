@@ -51,6 +51,7 @@
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_menu_margin"
         fab:fab_title="@string/add_picture"
+        fab:fab_icon="@drawable/ic_pen"
         fab:fab_addButtonColorNormal="@color/white"
         fab:fab_addButtonColorPressed="@color/white_pressed"
         fab:fab_addButtonPlusIconColor="@color/half_black"

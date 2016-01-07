@@ -37,6 +37,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -94,6 +95,8 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        Toast.makeText(this,getIntent().getStringExtra("userId"),Toast.LENGTH_LONG).show();
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
         Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.slide_down);
@@ -187,10 +190,12 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
         /*if( validateFields() )
             Snackbar.make(view,"validated",Snackbar.LENGTH_LONG).show();*/
         Intent intent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        fab.collapse();
         startActivityForResult(intent,1);
     }
     @OnClick(R.id.add_from_camera)
     public void onClickCamera(View view){
+                fab.collapse();
              captureImage();
 
     }

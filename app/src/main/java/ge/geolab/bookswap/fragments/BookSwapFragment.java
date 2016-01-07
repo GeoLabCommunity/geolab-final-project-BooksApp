@@ -175,6 +175,7 @@ public class BookSwapFragment extends Fragment {
                 bookObject.setTitle(obj.getString("title"));
                 bookObject.setLocation(obj.getString("location"));
                 bookObject.setExchangeItem(obj.getString("item"));
+                bookObject.setDescription(obj.getString("description"));
                 bookObject.seteMail(obj.getString("email"));
                 bookObject.setMobileNum(obj.getString("mobile"));
                 JSONArray imgArrayJSON=obj.getJSONArray("img");

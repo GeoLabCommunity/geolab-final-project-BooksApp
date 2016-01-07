@@ -33,6 +33,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.Book;
+import ge.geolab.bookswap.utils.CategoryArrays;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -76,7 +77,8 @@ public class DetailsActivity extends AppCompatActivity {
         }
         titleView.setText(book.getTitle());
         authorView.setText(book.getAuthor());
-        conditionView.setText(book.getCondition());
+        conditionView.setText(CategoryArrays.conditions[Integer.parseInt(book.getCondition())]);
+        categoryView.setText(CategoryArrays.categories[Integer.parseInt(book.getCategory())]);
         locationView.setText(book.getLocation());
         exchangeItemView.setText(book.getExchangeItem());
         emailView.setText(book.geteMail());

@@ -168,6 +168,9 @@ public class BookSwapFragment extends Fragment {
                 obj = jsonArray.getJSONObject(i);
 
                 Book bookObject=new Book();
+                bookObject.setCategory(obj.getString("category_id"));
+                bookObject.setAdType(obj.getString("type"));
+                bookObject.setCondition(obj.getString("state"));
                 bookObject.setAuthor(obj.getString("author"));
                 bookObject.setTitle(obj.getString("title"));
                 bookObject.setLocation(obj.getString("location"));

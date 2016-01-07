@@ -57,14 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
         textSliderView.image("http://192.168.1.100/geolabclass/uploads/"+book.getFrontImageUrl()).setScaleType(BaseSliderView.ScaleType.CenterCrop);
         imageSlider.addSlider(textSliderView);
         setData(book);
-       /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     @Override
@@ -92,8 +85,10 @@ public class DetailsActivity extends AppCompatActivity {
             /* handle the result */
                         Log.v("LoginActivity", response.toString());
                         try {
-                            id[0]=response.getJSONObject().getString("name");
-                            usernameView.setText(id[0]);
+                            if(response.getJSONObject()!=null) {
+                                id[0] = response.getJSONObject().getString("name");
+                                usernameView.setText(id[0]);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -16,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,7 +50,9 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.User;
+import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.views.adapters.MainActivityPagerAdapter;
+import ge.geolab.bookswap.views.customViews.CustomTabLayout;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
@@ -56,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.view_pager) ViewPager MainActivityViewPager;
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.tabs) TabLayout tabLayout;
+    @Bind(R.id.tabs) CustomTabLayout tabLayout;
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.navigation_view) NavigationView navigationView;
     @Bind(R.id.fab) FloatingActionButton fab;
@@ -77,8 +81,12 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         //set transition animation
         overridePendingTransition(R.anim.slide_down, R.anim.slide_out_right);
-
-
+      /* SpannableString exchange= new SpannableString("ვცვლი");
+        exchange.setSpan(new TypeFaceSpan(this.context, "bpg_nino_mtavruli_bold.ttf"), 0, exchange.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString finding=new SpannableString("ვეძებ");
+        finding.setSpan(new TypeFaceSpan(this.context, "bpg_nino_mtavruli_bold.ttf"), 0, finding.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);*/
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(

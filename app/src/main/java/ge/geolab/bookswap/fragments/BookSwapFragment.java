@@ -76,6 +76,7 @@ public class BookSwapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_swap, container, false);
         ButterKnife.bind(this,rootView);
+        final int adTypeIndex= getArguments().getInt(ARG_SECTION_NUMBER);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
         StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(columns,1);
         final Context context=getActivity().getApplicationContext();
@@ -87,8 +88,7 @@ public class BookSwapFragment extends Fragment {
         cacheJson();
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
-                fetchJsonData(requestQueue, jsonArrayUrl, bookAdList, adapter, refreshLayout);
-
+                fetchJsonData(requestQueue, jsonArrayUrl+"/type/"+adTypeIndex, bookAdList, adapter, refreshLayout);
             }
         });
         adapter.setOnItemClickListener(new BookAdListAdapter.OnItemClickListener() {
@@ -101,8 +101,7 @@ public class BookSwapFragment extends Fragment {
                 }
             }
         });
-        /*TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));*/
+
         return rootView;
     }
     private void cacheJson(){

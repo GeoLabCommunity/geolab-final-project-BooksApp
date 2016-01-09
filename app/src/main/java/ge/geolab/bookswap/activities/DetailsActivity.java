@@ -70,6 +70,11 @@ public class DetailsActivity extends AppCompatActivity {
             imageSlider.stopAutoCycle();
             pagerIndicator.setVisibility(View.GONE);
         }
+        if(book.getPictures().isEmpty()){
+            imageSlider.stopAutoCycle();
+            pagerIndicator.setVisibility(View.GONE);
+            imageSlider.setVisibility(View.GONE);
+        }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -108,7 +113,7 @@ public class DetailsActivity extends AppCompatActivity {
         ArrayList<String> imgArray=book.getPictures();
         for (int i = 0; i <imgArray.size() ; i++) {
             DefaultSliderView textSliderView=new DefaultSliderView(this);
-            textSliderView.image("http://192.168.1.100/geolabclass/uploads/"+imgArray.get(i)).setScaleType(BaseSliderView.ScaleType.CenterInside);
+            textSliderView.image(getResources().getString(R.string.picture_url)+imgArray.get(i)).setScaleType(BaseSliderView.ScaleType.CenterInside);
             imageSlider.addSlider(textSliderView);
 
         }

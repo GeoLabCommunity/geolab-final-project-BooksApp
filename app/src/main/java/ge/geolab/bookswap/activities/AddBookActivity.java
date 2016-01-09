@@ -214,12 +214,12 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
                 if(position==1){
                     exchangeText.setVisibility(View.GONE);
                     inputExchange.setVisibility(View.GONE);
-                    bookAd.setAdType(""+position);
+                    bookAd.setAdType(String.valueOf(position+1));
 
                 }else {
                     exchangeText.setVisibility(View.VISIBLE);
                     inputExchange.setVisibility(View.VISIBLE);
-                    bookAd.setAdType(""+position);
+                    bookAd.setAdType(String.valueOf(position+1));
                 }
             }
 
@@ -232,7 +232,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                    bookAd.setCondition(""+position);
+                    bookAd.setCondition(String.valueOf(position+1));
 
             }
 

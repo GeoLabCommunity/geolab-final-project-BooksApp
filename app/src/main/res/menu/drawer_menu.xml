@@ -8,7 +8,31 @@
             android:checked="false"
             android:icon="@drawable/ic_quill"
             android:title="მხატვრული ლიტერატურა" />
-
+        <item
+            android:id="@+id/school_books"
+            android:checked="false"
+            android:icon="@drawable/ic_school"
+            android:title="სკოლის წიგნები" />
+        <item
+            android:id="@+id/university_books"
+            android:checked="false"
+            android:icon="@drawable/ic_university"
+            android:title="საუნივერსიტეტო წიგნები" />
+        <item
+            android:id="@+id/lexicon"
+            android:checked="false"
+            android:icon="@drawable/ic_lexicon"
+            android:title="ლექსიკონები" />
+        <item
+            android:id="@+id/study_notes"
+            android:checked="false"
+            android:icon="@drawable/ic_lect_notes"
+            android:title="კონსპექტები" />
+        <item
+            android:id="@+id/comics"
+            android:checked="false"
+            android:icon="@drawable/ic_comics"
+            android:title="კომიქსები" />
 
 
 

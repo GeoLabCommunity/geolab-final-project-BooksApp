@@ -157,13 +157,13 @@ public class MainActivity extends AppCompatActivity {
         if(AccessToken.getCurrentAccessToken()!=null){
             Picasso.with(this).load("https://graph.facebook.com/"+Profile.getCurrentProfile().getId()+"/picture?type=large").into(userPicture);
             fbUserNameTextView.setText(Profile.getCurrentProfile().getName());
-            navigationView.getMenu().getItem(1).setTitle(getString(R.string.logout));
+            navigationView.getMenu().getItem(6).setTitle(getString(R.string.logout));
         }
     }
     private void clearUserUI(){
         userPicture.setImageResource(android.R.color.transparent);
         fbUserNameTextView.setText("");
-        navigationView.getMenu().getItem(1).setTitle(R.string.login);
+        navigationView.getMenu().getItem(6).setTitle(R.string.login);
     }
     private void createDrawerButton(){
         /**

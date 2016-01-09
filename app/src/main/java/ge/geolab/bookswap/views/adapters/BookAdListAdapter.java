@@ -62,19 +62,6 @@ public class BookAdListAdapter extends RecyclerView.Adapter<BookAdListAdapter.My
         return bookArray == null ? 0 : bookArray.size();
     }
 
-    /***** Creating OnItemClickListener *****/
-
-    // Define listener member variable
-    private static OnItemClickListener listener;
-    // Define the listener interface
-    public interface OnItemClickListener {
-        void onItemClick(View itemView, int position);
-    }
-    // Define the method that allows the parent activity or fragment to define the listener
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
-
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView photo;
@@ -86,14 +73,7 @@ public class BookAdListAdapter extends RecyclerView.Adapter<BookAdListAdapter.My
             container = (CardView) itemView.findViewById(R.id.card_view);
             photo = (ImageView) itemView.findViewById(R.id.list_photo);
             bookTitle = (TextView) itemView.findViewById(R.id.list_title);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Triggers click upwards to the adapter on click
-                    if (listener != null)
-                        listener.onItemClick(itemView, getLayoutPosition());
-                }
-            });
+
         }
     }
 

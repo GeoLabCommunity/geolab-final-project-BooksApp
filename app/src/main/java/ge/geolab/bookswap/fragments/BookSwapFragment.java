@@ -37,6 +37,7 @@ import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.activities.DetailsActivity;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.views.adapters.BookAdListAdapter;
+import ge.geolab.bookswap.views.customListeners.ItemClickSupport;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
 
 /**
@@ -48,7 +49,7 @@ public class BookSwapFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-
+    private static final String CATEGORY_ID = "category_id";
     public BookSwapFragment() {
     }
 
@@ -56,10 +57,11 @@ public class BookSwapFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static BookSwapFragment newInstance(int sectionNumber) {
+    public static BookSwapFragment newInstance(int sectionNumber,int categoryId) {
         BookSwapFragment fragment = new BookSwapFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putInt(CATEGORY_ID,categoryId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,6 +79,7 @@ public class BookSwapFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_swap, container, false);
         ButterKnife.bind(this,rootView);
         final int adTypeIndex= getArguments().getInt(ARG_SECTION_NUMBER);
+        int categoryId=getArguments().getInt(CATEGORY_ID);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
         StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(columns,1);
         final Context context=getActivity().getApplicationContext();
@@ -85,13 +88,17 @@ public class BookSwapFragment extends Fragment {
           bookAdList=new ArrayList<>();
         adapter=new BookAdListAdapter(context,bookAdList);
         bookAdListView.setAdapter(adapter);
-        cacheJson();
+
+        if(categoryId!=0){
+            jsonArrayUrl=jsonArrayUrl+"/category_id/"+categoryId+"/type/"+adTypeIndex;
+        }
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
                 fetchJsonData(requestQueue, jsonArrayUrl+"/type/"+adTypeIndex, bookAdList, adapter, refreshLayout);
             }
         });
-        adapter.setOnItemClickListener(new BookAdListAdapter.OnItemClickListener() {
+        cacheJson();
+     /*   adapter.setOnItemClickListener(new BookAdListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 if(!bookAdList.isEmpty()) {
@@ -99,6 +106,15 @@ public class BookSwapFragment extends Fragment {
                     intent.putExtra("book", bookAdList.get(position));
                     startActivity(intent);
                 }
+            }
+        });*/
+        ItemClickSupport.addTo(bookAdListView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                // do it
+                Intent intent = new Intent(context, DetailsActivity.class);
+                intent.putExtra("book", bookAdList.get(position));
+                startActivity(intent);
             }
         });
 

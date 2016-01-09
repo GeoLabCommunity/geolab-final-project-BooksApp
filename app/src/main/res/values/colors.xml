@@ -10,4 +10,5 @@
     <color name="black_semi_transparent">#b2000000</color>
     <color name="transparent_gray">#de414141</color>
     <color name="transparent_red">#dedf1515</color>
+    <color name="background">#EEEEEE</color>
 </resources>

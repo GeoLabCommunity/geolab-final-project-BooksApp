@@ -244,7 +244,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                bookAd.setCategory(""+position);
+                bookAd.setCategory(String.valueOf(position+1));
             }
 
             @Override

@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     AccessToken accessToken;
     AccessTokenTracker accessTokenTracker;
     Context context=this;
-
+    private int categoryId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity {
         fbUserNameTextView =(TextView) header.findViewById(R.id.username);
 
 
-        ViewPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager());
+
+        ViewPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager(),0);
         MainActivityViewPager.setAdapter(ViewPagerAdapter);
 
         tabLayout.setupWithViewPager(MainActivityViewPager);
-
         setNavigationMenuItemListeners();
         setUserUI();
 
@@ -217,8 +217,49 @@ public class MainActivity extends AppCompatActivity {
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
 
+                    case R.id.literature:
+                        if(!menuItem.isChecked()){
+                            ViewPagerAdapter.setCategoryId(0);
+                        }else{
+                        ViewPagerAdapter.setCategoryId(1);}
+                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        return true;
+                    case R.id.school_books:
+                        if(!menuItem.isChecked()){
+                            ViewPagerAdapter.setCategoryId(0);
+                        }else{
+                        ViewPagerAdapter.setCategoryId(2);}
+                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        return true;
+                    case R.id.university_books:
+                        if(!menuItem.isChecked()){
+                            ViewPagerAdapter.setCategoryId(0);
+                        }else{
+                        ViewPagerAdapter.setCategoryId(3);}
+                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        return true;
+                    case R.id.lexicon:
+                        if(!menuItem.isChecked()){
+                            ViewPagerAdapter.setCategoryId(0);
+                        }else{
+                        ViewPagerAdapter.setCategoryId(4);}
+                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        return true;
+                    case R.id.study_notes:
+                        if(!menuItem.isChecked()){
+                            ViewPagerAdapter.setCategoryId(0);
+                        }else{
+                        ViewPagerAdapter.setCategoryId(5);}
+                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        return true;
+                    case R.id.comics:
+                        if(!menuItem.isChecked()){
+                            ViewPagerAdapter.setCategoryId(0);
+                        }else{
+                        ViewPagerAdapter.setCategoryId(6);}
+                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        return true;
 
-                    //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.login:
                         loginInFacebook();
                         return true;

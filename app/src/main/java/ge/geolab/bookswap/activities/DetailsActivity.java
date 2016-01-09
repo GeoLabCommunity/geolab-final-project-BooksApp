@@ -69,6 +69,7 @@ public class DetailsActivity extends AppCompatActivity {
         if(book.getPictures().size()==1){
             imageSlider.stopAutoCycle();
             pagerIndicator.setVisibility(View.GONE);
+
         }
         if(book.getPictures().isEmpty()){
             imageSlider.stopAutoCycle();

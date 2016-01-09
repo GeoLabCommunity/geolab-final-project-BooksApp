@@ -129,7 +129,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="@dimen/details_view_margin_top"
                 android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
-                style="@style/add_book_text" />
+                style="@style/contact_information_title_text" />
             <TableRow>
                 <ImageView
                     android:layout_width="wrap_content"
@@ -143,6 +143,7 @@
                     android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
                     android:layout_gravity="bottom|center_horizontal"
                     style="@style/add_book_text"
+                    android:autoLink="email"
                     />
             </TableRow>
             <TableRow>
@@ -158,6 +159,7 @@
                     android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
                     android:layout_gravity="bottom|center_horizontal"
                     style="@style/add_book_text"
+                    android:autoLink="phone"
                     />
             </TableRow>
             <View
@@ -180,7 +182,7 @@
                     android:layout_weight=".8"
                     android:layout_gravity="center"
                     android:text="@string/details_of_book"
-                    style="@style/add_book_text"/>
+                    style="@style/description_title_text"/>
                 <ImageView
                     android:id="@+id/arrow"
                     android:layout_width="wrap_content"
@@ -194,8 +196,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
                 android:layout_marginBottom="10dp"
-                android:textStyle="bold"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:text="@string/description_not_found"/>
         </TableLayout>
 
     </android.support.v7.widget.CardView>

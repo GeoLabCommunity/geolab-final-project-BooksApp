@@ -22,6 +22,7 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
+        <item name="fontPath">fonts/bpg_nino_mtavruli_bold.ttf</item>
     </style>
 
     <style name="TextAppearence.App.TextInputLayout" parent="@android:style/TextAppearance">
@@ -44,10 +45,22 @@
     <style name="username_text">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="fontPath">fonts/bpg_nino_mtavruli_bold.ttf</item>
+    </style>
+    <style name="description_title_text">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:typeface">normal</item>
+    </style>
+    <style name="contact_information_title_text">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontPath">fonts/bpg_nino_mtavruli_bold.ttf</item>
     </style>
     <style name="book_title_style">
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="fontPath">fonts/bpg_nino_mtavruli_bold.ttf</item>
     </style>
     <style name="AndroidImageSlider_Magnifier_Oval_Black">
         <item name="android:layout_width">wrap_content</item>

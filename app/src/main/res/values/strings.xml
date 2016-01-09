@@ -34,6 +34,7 @@
     <string name="list_array_url">http://192.168.1.100/geolabclass/welcome/select</string>
     <string name="picture_url">http://192.168.1.100/geolabclass/uploads/</string>
     <string name="details_of_book">წიგნის დეტალური დახასიათება</string>
+    <string name="description_not_found">აღწერა ვერ მოიძებნა</string>
     <string-array name="category_array">
         <item>მხატვრული ლიტერატურა</item>
         <item>სკოლის წიგნები</item>
@@ -50,5 +51,5 @@
         <item>ვცვლი</item>
         <item>ვეძებ</item>
     </string-array>
-    <string name="title_activity_details">DetailsActivity</string>
+    <string name="title_activity_details">დეტალური გვერდი</string>
 </resources>

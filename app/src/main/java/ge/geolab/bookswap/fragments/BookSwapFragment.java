@@ -2,7 +2,9 @@ package ge.geolab.bookswap.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -50,6 +52,7 @@ public class BookSwapFragment extends Fragment {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String CATEGORY_ID = "category_id";
+
     public BookSwapFragment() {
     }
 
@@ -57,61 +60,78 @@ public class BookSwapFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static BookSwapFragment newInstance(int sectionNumber,int categoryId) {
+    public static BookSwapFragment newInstance(int sectionNumber, int categoryId) {
         BookSwapFragment fragment = new BookSwapFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        args.putInt(CATEGORY_ID,categoryId);
+        args.putInt(CATEGORY_ID, categoryId);
         fragment.setArguments(args);
         return fragment;
     }
-    @Bind(R.id.list_of_ads) RecyclerView bookAdListView;
-    @Bind(R.id.swipe_refresh) SwipeRefreshLayout refreshLayout;
-    @BindString(R.string.list_array_url) String jsonArrayUrl;
+
+    @Bind(R.id.list_of_ads)
+    RecyclerView bookAdListView;
+    @Bind(R.id.swipe_refresh)
+    SwipeRefreshLayout refreshLayout;
+    @BindString(R.string.list_array_url)
+    String jsonArrayUrl;
     private ArrayList<Book> bookAdList;
     private RequestQueue requestQueue;
     private BookAdListAdapter adapter;
-
-    private String lastItemIdInJson="0";
-
+    private String lastItemIdInJson = "0";
+    Snackbar pagingSnackbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_swap, container, false);
-        ButterKnife.bind(this,rootView);
+        ButterKnife.bind(this, rootView);
 
-        final int adTypeIndex= getArguments().getInt(ARG_SECTION_NUMBER);
-        final int categoryId=getArguments().getInt(CATEGORY_ID);
+        final int adTypeIndex = getArguments().getInt(ARG_SECTION_NUMBER);
+        final int categoryId = getArguments().getInt(CATEGORY_ID);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
-        final StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(columns,1);
-        final Context context=getActivity().getApplicationContext();
-        requestQueue= Volley.newRequestQueue(context);
+        final StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(columns, 1);
+        final Context context = getActivity().getApplicationContext();
+        requestQueue = Volley.newRequestQueue(context);
+
         bookAdListView.setLayoutManager(gridLayoutManager);
-          bookAdList=new ArrayList<>();
-        adapter= new BookAdListAdapter(context, bookAdList);
+        bookAdList = new ArrayList<>();
+        adapter = new BookAdListAdapter(context, bookAdList);
         bookAdListView.setAdapter(adapter);
-        final EndlessRecyclerViewScrollListener scrollListener=new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+
+        final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
 
-                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl,lastItemIdInJson,categoryId,adTypeIndex), bookAdList, adapter, refreshLayout);
+                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+
+                pagingSnackbar.setActionTextColor(Color.RED).setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        requestQueue.cancelAll("REQUEST");
+                    }
+                });
+                pagingSnackbar.show();
             }
         };
         bookAdListView.addOnScrollListener(scrollListener);
-
-        if(categoryId!=0){
-            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl,lastItemIdInJson,categoryId,adTypeIndex), bookAdList, adapter, refreshLayout);
+        if (categoryId == 0) {
+            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+        }
+        if (categoryId != 0) {
+            lastItemIdInJson = "0";
+            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
             //jsonArrayUrl=jsonArrayUrl+"/category_id/"+categoryId+"/type/"+adTypeIndex;
         }
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
-                lastItemIdInJson="0";
-                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl,lastItemIdInJson,categoryId,adTypeIndex), bookAdList, adapter, refreshLayout);
+                lastItemIdInJson = "0";
+                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
                 scrollListener.reset();
             }
         });
-       // cacheJson();
+        // cacheJson();
 
         ItemClickSupport.addTo(bookAdListView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
@@ -125,11 +145,19 @@ public class BookSwapFragment extends Fragment {
 
         return rootView;
     }
-    private String parseUrl(String url,String lastId,int categoryId,int typeId){
 
-        return url+lastId+"/category_id/"+categoryId+"/type/"+typeId;
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        pagingSnackbar = Snackbar.make(bookAdListView, "მონაცემები იტვირთება", Snackbar.LENGTH_INDEFINITE);
     }
-    private void cacheJson(){
+
+    private String parseUrl(String url, String lastId, int categoryId, int typeId) {
+
+        return url + lastId + "/category_id/" + categoryId + "/type/" + typeId;
+    }
+
+    private void cacheJson() {
         Cache cache = requestQueue.getCache();
         Cache.Entry entry = cache.get(jsonArrayUrl);
 
@@ -140,7 +168,7 @@ public class BookSwapFragment extends Fragment {
 
                 JSONArray jsonArray = new JSONArray(data);
 
-                setData(jsonArray,bookAdList, adapter, refreshLayout);
+                setData(jsonArray, bookAdList, adapter, refreshLayout);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -152,16 +180,20 @@ public class BookSwapFragment extends Fragment {
             fetchJsonData(requestQueue, jsonArrayUrl, bookAdList, adapter, refreshLayout);
         }
     }
+
     private void fetchJsonData(RequestQueue requestQueue, String url,
                                final ArrayList<Book> list,
                                final BookAdListAdapter adapter,
-                               final SwipeRefreshLayout refreshLayout){
-        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(url,new Response.Listener<JSONArray>() {
+                               final SwipeRefreshLayout refreshLayout) {
 
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray jsonArray) {
-                setData(jsonArray,list,adapter,refreshLayout);
+
+                setData(jsonArray, list, adapter, refreshLayout);
+                pagingSnackbar.dismiss();
             }
         },
                 new Response.ErrorListener() {
@@ -176,26 +208,28 @@ public class BookSwapFragment extends Fragment {
                         refreshLayout.setRefreshing(false);
                     }
                 });
-
+        jsonArrayRequest.setTag("REQUEST");
         requestQueue.add(jsonArrayRequest);
 
 
     }
+
     private void setData(JSONArray jsonArray,
                          final ArrayList<Book> list,
                          final BookAdListAdapter adapter,
-                         final SwipeRefreshLayout refreshLayout){
+                         final SwipeRefreshLayout refreshLayout) {
         //this is called if we want to refresh list
-        if(lastItemIdInJson.equals("0")){
-        list.clear();
-        adapter.notifyDataSetChanged();}
+        if (lastItemIdInJson.equals("0")) {
+            list.clear();
+            adapter.notifyDataSetChanged();
+        }
         int curSize = adapter.getItemCount();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = null;
             try {
                 obj = jsonArray.getJSONObject(i);
 
-                Book bookObject=new Book();
+                Book bookObject = new Book();
                 bookObject.setCategory(obj.getString("category_id"));
                 bookObject.setAdType(obj.getString("type"));
                 bookObject.setCondition(obj.getString("state"));
@@ -206,17 +240,17 @@ public class BookSwapFragment extends Fragment {
                 bookObject.setDescription(obj.getString("description"));
                 bookObject.seteMail(obj.getString("email"));
                 bookObject.setMobileNum(obj.getString("mobile"));
-                JSONArray imgArrayJSON=obj.getJSONArray("img");
-                ArrayList<String> imgArray=new ArrayList<>();
-                for (int k= 0; k <imgArrayJSON.length() ; k++) {
+                JSONArray imgArrayJSON = obj.getJSONArray("img");
+                ArrayList<String> imgArray = new ArrayList<>();
+                for (int k = 0; k < imgArrayJSON.length(); k++) {
                     imgArray.add(imgArrayJSON.getString(k));
-                    if(k==0){
+                    if (k == 0) {
                         bookObject.setFrontImageUrl(imgArrayJSON.getString(0));
                     }
                 }
                 bookObject.setPictures(imgArray);
                 bookObject.setId(obj.getString("user_id"));
-                lastItemIdInJson=obj.getString("id");
+                lastItemIdInJson = obj.getString("id");
                 list.add(bookObject);
 
             } catch (JSONException e) {
@@ -229,8 +263,7 @@ public class BookSwapFragment extends Fragment {
         // For efficiency purposes, notify the adapter of only the elements that got changed
         // curSize will equal to the index of the first element inserted because the list is 0-indexed
 
-            adapter.notifyItemRangeInserted(curSize, list.size() - 1);
-
+        adapter.notifyItemRangeInserted(curSize, list.size() - 1);
 
 
         refreshLayout.setRefreshing(false);
@@ -260,8 +293,7 @@ public class BookSwapFragment extends Fragment {
             for (int i = 0; i < lastVisibleItemPositions.length; i++) {
                 if (i == 0) {
                     maxSize = lastVisibleItemPositions[i];
-                }
-                else if (lastVisibleItemPositions[i] > maxSize) {
+                } else if (lastVisibleItemPositions[i] > maxSize) {
                     maxSize = lastVisibleItemPositions[i];
                 }
             }
@@ -304,6 +336,7 @@ public class BookSwapFragment extends Fragment {
                 loading = true;
             }
         }
+
         public void reset() {
             this.currentPage = this.startingPageIndex;
             this.previousTotalItemCount = 0;
@@ -311,6 +344,7 @@ public class BookSwapFragment extends Fragment {
             this.loading = true;
 
         }
-     public abstract void onLoadMore(int page, int totalItemsCount);
+
+        public abstract void onLoadMore(int page, int totalItemsCount);
     }
 }

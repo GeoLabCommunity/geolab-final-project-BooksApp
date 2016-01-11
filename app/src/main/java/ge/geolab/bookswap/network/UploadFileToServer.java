@@ -95,7 +95,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         httpclient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
         httpclient.getParams().setParameter("http.protocol.content-charset", HTTP.UTF_8);
         httpParameters.setBooleanParameter("http.protocol.expect-continue", false);
-        HttpPost httppost = new HttpPost("http://192.168.1.100/geolabclass/welcome/upload");
+        HttpPost httppost = new HttpPost(context.getResources().getString(R.string.FILE_UPLOAD_URL));
         try {
             AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
                     new AndroidMultiPartEntity.ProgressListener() {

@@ -72,42 +72,47 @@ public class BookSwapFragment extends Fragment {
     private RequestQueue requestQueue;
     private BookAdListAdapter adapter;
 
+    private String lastItemIdInJson="0";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_swap, container, false);
         ButterKnife.bind(this,rootView);
+
         final int adTypeIndex= getArguments().getInt(ARG_SECTION_NUMBER);
-        int categoryId=getArguments().getInt(CATEGORY_ID);
+        final int categoryId=getArguments().getInt(CATEGORY_ID);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
-        StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(columns,1);
+        final StaggeredGridLayoutManager gridLayoutManager=new StaggeredGridLayoutManager(columns,1);
         final Context context=getActivity().getApplicationContext();
         requestQueue= Volley.newRequestQueue(context);
         bookAdListView.setLayoutManager(gridLayoutManager);
           bookAdList=new ArrayList<>();
-        adapter=new BookAdListAdapter(context,bookAdList);
+        adapter= new BookAdListAdapter(context, bookAdList);
         bookAdListView.setAdapter(adapter);
+        final EndlessRecyclerViewScrollListener scrollListener=new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+
+                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl,lastItemIdInJson,categoryId,adTypeIndex), bookAdList, adapter, refreshLayout);
+            }
+        };
+        bookAdListView.addOnScrollListener(scrollListener);
 
         if(categoryId!=0){
-            jsonArrayUrl=jsonArrayUrl+"/category_id/"+categoryId+"/type/"+adTypeIndex;
+            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl,lastItemIdInJson,categoryId,adTypeIndex), bookAdList, adapter, refreshLayout);
+            //jsonArrayUrl=jsonArrayUrl+"/category_id/"+categoryId+"/type/"+adTypeIndex;
         }
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
-                fetchJsonData(requestQueue, jsonArrayUrl+"/type/"+adTypeIndex, bookAdList, adapter, refreshLayout);
+                lastItemIdInJson="0";
+                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl,lastItemIdInJson,categoryId,adTypeIndex), bookAdList, adapter, refreshLayout);
+                scrollListener.reset();
             }
         });
-        cacheJson();
-     /*   adapter.setOnItemClickListener(new BookAdListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if(!bookAdList.isEmpty()) {
-                    Intent intent = new Intent(context, DetailsActivity.class);
-                    intent.putExtra("book", bookAdList.get(position));
-                    startActivity(intent);
-                }
-            }
-        });*/
+       // cacheJson();
+
         ItemClickSupport.addTo(bookAdListView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -119,6 +124,10 @@ public class BookSwapFragment extends Fragment {
         });
 
         return rootView;
+    }
+    private String parseUrl(String url,String lastId,int categoryId,int typeId){
+
+        return url+lastId+"/category_id/"+categoryId+"/type/"+typeId;
     }
     private void cacheJson(){
         Cache cache = requestQueue.getCache();
@@ -176,7 +185,11 @@ public class BookSwapFragment extends Fragment {
                          final ArrayList<Book> list,
                          final BookAdListAdapter adapter,
                          final SwipeRefreshLayout refreshLayout){
+        //this is called if we want to refresh list
+        if(lastItemIdInJson.equals("0")){
         list.clear();
+        adapter.notifyDataSetChanged();}
+        int curSize = adapter.getItemCount();
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = null;
             try {
@@ -203,6 +216,7 @@ public class BookSwapFragment extends Fragment {
                 }
                 bookObject.setPictures(imgArray);
                 bookObject.setId(obj.getString("user_id"));
+                lastItemIdInJson=obj.getString("id");
                 list.add(bookObject);
 
             } catch (JSONException e) {
@@ -210,8 +224,93 @@ public class BookSwapFragment extends Fragment {
             }
 
         }
-        adapter.notifyDataSetChanged();
+
+
+        // For efficiency purposes, notify the adapter of only the elements that got changed
+        // curSize will equal to the index of the first element inserted because the list is 0-indexed
+
+            adapter.notifyItemRangeInserted(curSize, list.size() - 1);
+
+
+
         refreshLayout.setRefreshing(false);
     }
 
+    public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
+        // The minimum amount of items to have below your current scroll position
+        // before loading more.
+        private int visibleThreshold = 1;
+        // The current offset index of data you have loaded
+        private int currentPage = 0;
+        // The total number of items in the dataset after the last load
+        private int previousTotalItemCount = 0;
+        // True if we are still waiting for the last set of data to load.
+        private boolean loading = true;
+        // Sets the starting page index
+        private int startingPageIndex = 0;
+        StaggeredGridLayoutManager mStaggeredGridLayoutManager;
+
+        public EndlessRecyclerViewScrollListener(StaggeredGridLayoutManager layoutManager) {
+            this.mStaggeredGridLayoutManager = layoutManager;
+            visibleThreshold = visibleThreshold * mStaggeredGridLayoutManager.getSpanCount();
+        }
+
+        public int getLastVisibleItem(int[] lastVisibleItemPositions) {
+            int maxSize = 0;
+            for (int i = 0; i < lastVisibleItemPositions.length; i++) {
+                if (i == 0) {
+                    maxSize = lastVisibleItemPositions[i];
+                }
+                else if (lastVisibleItemPositions[i] > maxSize) {
+                    maxSize = lastVisibleItemPositions[i];
+                }
+            }
+            return maxSize;
+        }
+
+        // This happens many times a second during a scroll, so be wary of the code you place here.
+        // We are given a few useful parameters to help us work out if we need to load some more data,
+        // but first we check if we are waiting for the previous load to finish.
+        @Override
+        public void onScrolled(RecyclerView view, int dx, int dy) {
+            int[] lastVisibleItemPositions = mStaggeredGridLayoutManager.findLastVisibleItemPositions(null);
+            int lastVisibleItemPosition = getLastVisibleItem(lastVisibleItemPositions);
+            int visibleItemCount = view.getChildCount();
+            int totalItemCount = mStaggeredGridLayoutManager.getItemCount();
+
+            // If the total item count is zero and the previous isn't, assume the
+            // list is invalidated and should be reset back to initial state
+            if (totalItemCount < previousTotalItemCount) {
+                this.currentPage = this.startingPageIndex;
+                this.previousTotalItemCount = totalItemCount;
+                if (totalItemCount == 0) {
+                    this.loading = true;
+                }
+            }
+            // If it’s still loading, we check to see if the dataset count has
+            // changed, if so we conclude it has finished loading and update the current page
+            // number and total item count.
+            if (loading && (totalItemCount > previousTotalItemCount)) {
+                loading = false;
+                previousTotalItemCount = totalItemCount;
+            }
+
+            // If it isn’t currently loading, we check to see if we have breached
+            // the visibleThreshold and need to reload more data.
+            // If we do need to reload some more data, we execute onLoadMore to fetch the data.
+            if (!loading && (lastVisibleItemPosition + visibleThreshold) >= totalItemCount) {
+                currentPage++;
+                onLoadMore(currentPage, totalItemCount);
+                loading = true;
+            }
+        }
+        public void reset() {
+            this.currentPage = this.startingPageIndex;
+            this.previousTotalItemCount = 0;
+
+            this.loading = true;
+
+        }
+     public abstract void onLoadMore(int page, int totalItemsCount);
+    }
 }

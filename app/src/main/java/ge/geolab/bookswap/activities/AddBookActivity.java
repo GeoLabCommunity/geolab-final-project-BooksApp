@@ -413,8 +413,9 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
 
             new UploadFileToServer(this, bookAd).execute();
             Intent intent=new Intent(this,MainActivity.class);
-            finish();
-            startActivity(intent);
+
+
+           finish();
         }
     }
 

@@ -26,7 +26,6 @@ public class BookAdListAdapter extends RecyclerView.Adapter<BookAdListAdapter.My
     private ArrayList<Book> bookArray = new ArrayList<>();
     Context context;
     private int lastPosition = -1;
-
     public BookAdListAdapter(Context context, ArrayList<Book> bookArray) {
         this.context = context;
         this.bookArray = bookArray;
@@ -55,7 +54,6 @@ public class BookAdListAdapter extends RecyclerView.Adapter<BookAdListAdapter.My
                 .into(holder.photo);
 
     }
-
 
     @Override
     public int getItemCount() {

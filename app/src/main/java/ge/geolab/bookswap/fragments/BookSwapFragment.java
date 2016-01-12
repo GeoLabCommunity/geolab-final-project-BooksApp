@@ -186,7 +186,7 @@ public class BookSwapFragment extends Fragment {
                                final BookAdListAdapter adapter,
                                final SwipeRefreshLayout refreshLayout) {
 
-
+          refreshLayout.setRefreshing(true);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
 
             @Override

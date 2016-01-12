@@ -226,6 +226,24 @@
             android:layout_marginBottom="@dimen/details_view_margin_top"
             android:layout_gravity="center_horizontal"
             style="@style/username_text"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/details_view_margin_top"
+                android:layout_gravity="center_horizontal"
+                style="@style/username_text"
+                android:text="@string/other_books"
+                />
+            <com.daimajia.slider.library.SliderLayout
+                android:id="@+id/suggestions_slider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/image_slider_height"
+                android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginEnd="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginTop="@dimen/details_view_margin_top"
+                android:layout_marginBottom="@dimen/details_view_margin_top"
+                android:layout_gravity="center_horizontal"
+                />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

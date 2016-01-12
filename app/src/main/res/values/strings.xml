@@ -35,6 +35,7 @@
     <string name="picture_url">http://192.168.1.100/geolabclass/uploads/</string>
     <string name="details_of_book">წიგნის დეტალური დახასიათება</string>
     <string name="description_not_found">აღწერა ვერ მოიძებნა</string>
+    <string name="other_books">სხვა განცხადებები</string>
     <string-array name="category_array">
         <item>მხატვრული ლიტერატურა</item>
         <item>სკოლის წიგნები</item>

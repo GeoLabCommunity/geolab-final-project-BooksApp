@@ -68,16 +68,19 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     @Bind(R.id.custom_indicator) PagerIndicator pagerIndicator;
     @Bind(R.id.suggestions_slider) SliderLayout suggestionsSlider;
     @BindString(R.string.list_array_url) String jsonUrl;
+    private Book book;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
         Animation fade_in = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.fade_in);
         descriptionView.setInAnimation(fade_in);
-        Book book= (Book) getIntent().getSerializableExtra("book");
+       book= (Book) getIntent().getSerializableExtra("book");
            imageSlider.setCustomIndicator(pagerIndicator);
         setData(book);
         if(book.getPictures().size()==1){
@@ -92,7 +95,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
             });
 
         }
-        if(book.getPictures().isEmpty()){
+        if(book.getPictures().get(0).equals("null")){
             imageSlider.stopAutoCycle();
             pagerIndicator.setVisibility(View.GONE);
             imageSlider.setVisibility(View.GONE);
@@ -187,40 +190,49 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = null;
-
+                        try {
+                            obj = jsonArray.getJSONObject(i);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         if(i>5) break;
                         //skip first Ad
-                      if(i!=0) {
-                          try {
-                              obj = jsonArray.getJSONObject(i);
+                        try {
+                            assert obj != null;
+                            if(!book.getTitle().equals(obj.getString("title"))) {
+                                try {
 
-                              Book bookObject = new Book();
-                              bookObject.setCategory(obj.getString("category_id"));
-                              bookObject.setAdType(obj.getString("type"));
-                              bookObject.setCondition(obj.getString("state"));
-                              bookObject.setAuthor(obj.getString("author"));
-                              bookObject.setTitle(obj.getString("title"));
-                              bookObject.setLocation(obj.getString("location"));
-                              bookObject.setExchangeItem(obj.getString("item"));
-                              bookObject.setDescription(obj.getString("description"));
-                              bookObject.seteMail(obj.getString("email"));
-                              bookObject.setMobileNum(obj.getString("mobile"));
-                              JSONArray imgArrayJSON = obj.getJSONArray("img");
-                              ArrayList<String> imgArray = new ArrayList<>();
-                              for (int k = 0; k < imgArrayJSON.length(); k++) {
-                                  imgArray.add(imgArrayJSON.getString(k));
-                                  if (k == 0) {
-                                      bookObject.setFrontImageUrl(imgArrayJSON.getString(0));
-                                  }
-                              }
-                              bookObject.setPictures(imgArray);
-                              bookObject.setId(obj.getString("user_id"));
-                              list.add(bookObject);
 
-                          } catch (JSONException e) {
-                              e.printStackTrace();
-                          }
-                      }
+                                    Book bookObject = new Book();
+                                    bookObject.setCategory(obj.getString("category_id"));
+                                    bookObject.setAdType(obj.getString("type"));
+                                    bookObject.setCondition(obj.getString("state"));
+                                    bookObject.setAuthor(obj.getString("author"));
+                                    bookObject.setTitle(obj.getString("title"));
+                                    bookObject.setLocation(obj.getString("location"));
+                                    bookObject.setExchangeItem(obj.getString("item"));
+                                    bookObject.setDescription(obj.getString("description"));
+                                    bookObject.seteMail(obj.getString("email"));
+                                    bookObject.setMobileNum(obj.getString("mobile"));
+                                    JSONArray imgArrayJSON = obj.getJSONArray("img");
+                                    ArrayList<String> imgArray = new ArrayList<>();
+                                    for (int k = 0; k < imgArrayJSON.length(); k++) {
+                                        imgArray.add(imgArrayJSON.getString(k));
+                                        if (k == 0) {
+                                            bookObject.setFrontImageUrl(imgArrayJSON.getString(0));
+                                        }
+                                    }
+                                    bookObject.setPictures(imgArray);
+                                    bookObject.setId(obj.getString("user_id"));
+                                    list.add(bookObject);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                     createSuggestionSlider(list);
                     if(list.size()==1){

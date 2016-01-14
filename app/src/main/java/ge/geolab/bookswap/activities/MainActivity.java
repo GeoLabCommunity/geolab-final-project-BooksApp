@@ -412,4 +412,24 @@ public class MainActivity extends AppCompatActivity {
         accessTokenTracker.stopTracking();
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(context)
+                .setTitle("")
+                .setMessage("გსურთ დატოვოთ აპლიკაცია ?")
+                .setCancelable(false)
+                .setPositiveButton("კი", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+
+                    }
+                })
+                .setNegativeButton("არა", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
+    }
 }

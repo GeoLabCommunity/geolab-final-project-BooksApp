@@ -263,7 +263,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.login:
                         loginInFacebook();
                         return true;
-
+                    case R.id.profile:
+                        Intent intent=new Intent(MainActivity.this,ProfileActivity.class);
+                        startActivity(intent);
 
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();

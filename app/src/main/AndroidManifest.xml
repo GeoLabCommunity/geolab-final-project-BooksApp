@@ -49,11 +49,20 @@
 
         <receiver
             android:name=".network.UploadRetryReceiver"
-            android:enabled="true"></receiver>
+            android:enabled="true" />
 
         <activity
             android:name=".activities.DetailsActivity"
             android:label="@string/title_activity_details"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ge.geolab.bookswap.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:label="@string/title_activity_profile"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

@@ -53,4 +53,6 @@
         <item>ვეძებ</item>
     </string-array>
     <string name="title_activity_details">დეტალური გვერდი</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+
 </resources>

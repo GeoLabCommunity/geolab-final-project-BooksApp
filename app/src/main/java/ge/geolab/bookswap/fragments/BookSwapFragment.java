@@ -80,6 +80,7 @@ public class BookSwapFragment extends Fragment {
     private BookAdListAdapter adapter;
     private String lastItemIdInJson = "0";
     Snackbar pagingSnackbar;
+    Snackbar errorSnackbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -150,6 +151,8 @@ public class BookSwapFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         pagingSnackbar = Snackbar.make(bookAdListView, "მონაცემები იტვირთება", Snackbar.LENGTH_INDEFINITE);
+        errorSnackbar=Snackbar.make(bookAdListView,
+                "საჭიროა ინტერნეტთან კავშირი", Snackbar.LENGTH_LONG);
     }
 
     private String parseUrl(String url, String lastId, int categoryId, int typeId) {
@@ -201,8 +204,8 @@ public class BookSwapFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("Volley=>", "Error: " + error.getMessage());
-                        Snackbar.make(bookAdListView,
-                                "საჭიროა ინტერნეტთან კავშირი", Snackbar.LENGTH_LONG).show();
+                        errorSnackbar.show();
+
                         // hide the progress dialog
                         // hidepDialog();
                         refreshLayout.setRefreshing(false);

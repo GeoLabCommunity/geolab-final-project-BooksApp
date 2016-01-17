@@ -20,6 +20,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.DragEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +81,6 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
     @Bind(R.id.fab) FloatingActionsMenu fab;
     @Bind(R.id.add_from_camera) FloatingActionButton fabCamera;
     @Bind(R.id.add_from_gallery) FloatingActionButton fabGallery;
-    @Bind(R.id.submit) Button button;
     @Bind(R.id.pic_container) LinearLayout picContainer;
     @Bind(R.id.recycle_bin) RecycleBinView recycleBin;
     private Uri fileUri;
@@ -406,19 +407,34 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
 
 
     }
-    @OnClick(R.id.submit)
-    public void onSubmit(View view){
-        createBook();
-        if(validateFields()) {
 
-            new UploadFileToServer(this, bookAd).execute();
-            Intent intent=new Intent(this,MainActivity.class);
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    getMenuInflater().inflate(R.menu.menu_add_book, menu);
+    return true;
+}
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-           finish();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_send) {
+            createBook();
+            if(validateFields()) {
+
+                new UploadFileToServer(this, bookAd).execute();
+                finish();
+            }
+            return true;
         }
-    }
 
+        return super.onOptionsItemSelected(item);
+    }
     public String getRealPathFromURI (Uri contentUri) {
         String path = null;
         String[] proj = { MediaStore.MediaColumns.DATA };

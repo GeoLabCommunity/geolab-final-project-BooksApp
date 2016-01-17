@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- this view reveals when swipe right -->
 <RelativeLayout
@@ -16,7 +17,19 @@ android:layout_height="match_parent">
     android:layout_alignParentLeft="true"
     android:layout_centerVertical="true"
     android:layout_marginLeft="20dp"
-    android:src="@drawable/ic_delete"/>
+    android:tint="@color/white"
+    android:src="@drawable/ic_pen"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingRight="50dp"
+        android:textColor="@color/white"
+        android:text="@string/edit"
+        android:textSize="25sp"
+        fontPath="fonts/bpg_nino_mtavruli_bold.ttf"
+        tools:ignore="MissingPrefix"
+        />
 </RelativeLayout>
 
     <!-- this view reveals when swipe left -->
@@ -33,33 +46,62 @@ android:layout_height="match_parent">
     android:layout_centerVertical="true"
     android:layout_marginRight="20dp"
     android:src="@drawable/ic_delete"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:paddingLeft="115dp"
+        android:text="@string/remove"
+        android:textSize="25sp"
+        fontPath="fonts/bpg_nino_mtavruli_bold.ttf"
+        tools:ignore="MissingPrefix"
+        />
 </RelativeLayout>
 
     <!-- this is the item front view -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_click"
 android:orientation="horizontal" android:layout_width="match_parent"
 android:layout_height="match_parent"
-    android:background="@color/background"
+android:background="@color/background"
     android:tag="front">
     <ImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/book_image"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        android:layout_weight=".2"
         android:layout_gravity="center_vertical"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_quill"
         android:background="@drawable/ring"
         android:adjustViewBounds="true"
-        android:layout_weight=".2"
+
      />
-<TextView
-    android:id="@+id/book_title"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:textSize="20sp"
-    android:layout_weight=".8"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.8"
+        >
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            fontPath="fonts/bpg_nino_mtavruli_bold.ttf"
+            tools:ignore="MissingPrefix"
+            />
+        <TextView
+            android:id="@+id/book_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_marginTop="5dp"
+            />
+    </LinearLayout>
+
 </LinearLayout>
     <View android:background="@color/divider"
         android:layout_width="fill_parent"

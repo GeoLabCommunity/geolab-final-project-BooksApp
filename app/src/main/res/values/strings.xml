@@ -53,7 +53,7 @@
         <item>ვეძებ</item>
     </string-array>
     <string name="title_activity_details">დეტალური გვერდი</string>
-    <string name="title_activity_profile">ჩემი წიგნები</string>
+    <string name="title_activity_profile"> </string>
     <string name="action_send">დადასტურება</string>
     <string name="remove">წაშლა</string>
     <string name="edit">რედაქტირება</string>

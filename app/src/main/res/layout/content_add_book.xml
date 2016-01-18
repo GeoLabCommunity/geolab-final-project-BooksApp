@@ -146,6 +146,7 @@
                    android:layout_height="wrap_content"
                    android:inputType="numberSigned"
                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                   android:text="+995"
                    style="@style/add_book_text"
                    />
            </TableRow>
@@ -183,7 +184,7 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp">
+        android:layout_marginTop="30dp">
     <LinearLayout
         android:id="@+id/pic_container"
         android:layout_width="match_parent"

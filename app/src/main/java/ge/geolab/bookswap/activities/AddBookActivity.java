@@ -273,7 +273,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
         String exchangeItem=String.valueOf(inputExchange.getText());
         String location=String.valueOf(inputLocation.getText());
         String email=String.valueOf(inputEmail.getText());
-        String mobileNum="+995"+String.valueOf(inputMobileNum.getText());
+        String mobileNum=String.valueOf(inputMobileNum.getText());
         pictureArray=new ArrayList<>(pictureMap.values());
         bookAd.setAuthor(author);
         bookAd.setId(id);

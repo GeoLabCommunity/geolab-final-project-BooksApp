@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.activities.MainActivity;
 import ge.geolab.bookswap.models.Book;
+import okhttp3.OkHttpClient;
+import okio.Okio;
 
 /**
  * Created by dalkh on 30-Dec-15.
@@ -166,6 +168,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
                 // Removes the progress bar
                 mBuilder.setProgress(0, 0, false);
                 mNotifyManager.notify(id, mBuilder.build());
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

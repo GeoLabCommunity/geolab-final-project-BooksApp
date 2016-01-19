@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,11 +19,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.Profile;
 
@@ -44,7 +47,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ProfileActivity extends AppCompatActivity {
     @Bind(R.id.profile_book_list) RecyclerView bookListView;
+    @Bind(R.id.swipe_refresh)
+    SwipeRefreshLayout refreshLayout;
     @BindString(R.string.list_array_url) String jsonUrl;
+    @BindString(R.string.remove_entry_url) String removeUrl;
     private ProfileListAdapter profileListAdapter;
     private ArrayList<Book> bookList;
     Context context=this;
@@ -82,7 +88,7 @@ public class ProfileActivity extends AppCompatActivity {
                         .setPositiveButton("კი", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                final int pos = removeBook(itemData);
+                                removeBook(itemData);
 
                             }
                         })
@@ -118,7 +124,12 @@ public class ProfileActivity extends AppCompatActivity {
                 //do something
             }
         });
-
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getSuggestionsData(jsonUrl, Profile.getCurrentProfile().getId(),bookList,profileListAdapter);
+            }
+        });
     }
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -126,13 +137,17 @@ public class ProfileActivity extends AppCompatActivity {
     }
     private void getSuggestionsData(String url, String id, final ArrayList<Book> list, final ProfileListAdapter adapter){
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        refreshLayout.setRefreshing(true);
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url+"0/user_id/"+id, new Response.Listener<JSONArray>() {
+
+
 
             @Override
             public void onResponse(JSONArray jsonArray) {
+                       list.clear();
 
-
-
+                     refreshLayout.setRefreshing(false);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = null;
 
@@ -142,6 +157,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                                     obj = jsonArray.getJSONObject(i);
                                     Book bookObject = new Book();
+                                    bookObject.setServer_id(obj.getString("id"));
                                     bookObject.setCategory(obj.getString("category_id"));
                                     bookObject.setAdType(obj.getString("type"));
                                     bookObject.setCondition(obj.getString("state"));
@@ -182,7 +198,7 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("Volley=>", "Error: " + error.getMessage());
-
+                         refreshLayout.setRefreshing(false);
                         // hide the progress dialog
                         // hidepDialog();
 
@@ -192,10 +208,56 @@ public class ProfileActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
 
     }
-    private int removeBook(Book book) {
+    private void displaySnackbar(String text, String actionName, View.OnClickListener action) {
+        Snackbar snack = Snackbar.make(bookListView, text, Snackbar.LENGTH_INDEFINITE)
+                .setAction(actionName, action);
+
+
+
+        snack.show();
+    }
+
+    private void removeBook(Book book) {
         int pos = bookList.indexOf(book);
-       bookList.remove(book);
-       profileListAdapter.notifyItemRemoved(pos);
-        return pos;
+        sendRemoveRequest(book,pos);
+
+    }
+    private void addBook(int pos, Book book) {
+        bookList.add(pos, book);
+        profileListAdapter.notifyItemInserted(pos);
+    }
+    private void sendRemoveRequest(final Book book, final int position){
+        final RequestQueue requestQueue = Volley.newRequestQueue(this);
+        final StringRequest jsonArrayRequest = new StringRequest(Request.Method.GET,removeUrl+book.getServer_id(), new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                bookList.remove(book);
+                profileListAdapter.notifyItemRemoved(position);
+                Snackbar.make(bookListView,book.getTitle()+" წაიშალა",Snackbar.LENGTH_LONG).show();
+
+            }
+
+
+
+        },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("Volley=>", "Error: " + error.getMessage());
+                        displaySnackbar(getResources().getString(R.string.fb_error_snackbar_msg), "RETRY", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                removeBook(book);
+                            }
+                        });
+                        // hide the progress dialog
+                        // hidepDialog();
+
+                    }
+                });
+        //jsonArrayRequest.setTag("REQUEST");
+        requestQueue.add(jsonArrayRequest);
     }
 }

@@ -111,6 +111,7 @@ public class BookSwapFragment extends Fragment {
                     public void onClick(View v) {
 
                         requestQueue.cancelAll("REQUEST");
+                        refreshLayout.setRefreshing(false);
                     }
                 });
                 pagingSnackbar.show();
@@ -204,11 +205,12 @@ public class BookSwapFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("Volley=>", "Error: " + error.getMessage());
+                        refreshLayout.setRefreshing(false);
                         errorSnackbar.show();
 
                         // hide the progress dialog
                         // hidepDialog();
-                        refreshLayout.setRefreshing(false);
+
                     }
                 });
         jsonArrayRequest.setTag("REQUEST");

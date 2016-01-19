@@ -16,10 +16,11 @@ public class UploadRetryReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
              Book book= (Book) intent.getSerializableExtra("book");
+              ArrayList<String> deletedImages= (ArrayList<String>) intent.getSerializableExtra("deletedImages");
             /* ArrayList<String> picList=new ArrayList<>();
              picList=intent.getExtras().getStringArrayList("picList");*/
             // book.setPictures(picList);
              //System.out.println("&#&&#&#&#&"+picList.get(0));
-             new UploadFileToServer(context,book).execute();
+             new UploadFileToServer(context,book,deletedImages).execute();
     }
 }

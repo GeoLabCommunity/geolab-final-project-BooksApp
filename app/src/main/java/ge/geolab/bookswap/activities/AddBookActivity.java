@@ -427,7 +427,7 @@ public boolean onCreateOptionsMenu(Menu menu) {
             createBook();
             if(validateFields()) {
 
-                new UploadFileToServer(this, bookAd).execute();
+                new UploadFileToServer(this, bookAd,new ArrayList<String>()).execute();
                 finish();
             }
             return true;

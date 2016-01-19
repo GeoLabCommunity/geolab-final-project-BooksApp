@@ -53,13 +53,15 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
     long totalSize=0;
     Book book;
     Context context;
+    ArrayList<String> deletedImages;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     int id = 1;
 
-    public UploadFileToServer(Context context,Book book) {
+    public UploadFileToServer(Context context,Book book,ArrayList<String> deletedImages) {
         this.book=book;
         this.context=context;
+        this.deletedImages=deletedImages;
     }
     @Override
     protected void onPreExecute() {
@@ -97,7 +99,13 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         httpclient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
         httpclient.getParams().setParameter("http.protocol.content-charset", HTTP.UTF_8);
         httpParameters.setBooleanParameter("http.protocol.expect-continue", false);
-        HttpPost httppost = new HttpPost(context.getResources().getString(R.string.FILE_UPLOAD_URL));
+        String url=context.getResources().getString(R.string.FILE_UPLOAD_URL);
+
+        //url for editing entry
+        if(this.book.getServer_id()!=null){
+        url+="/"+this.book.getServer_id();
+        }
+        HttpPost httppost = new HttpPost(url);
         try {
             AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
                     new AndroidMultiPartEntity.ProgressListener() {
@@ -112,7 +120,13 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
             ArrayList<String> bookArray=this.book.getPictures();
             // Adding file data to http body
             for (int i = 0; i <bookArray.size() ; i++) {
+
                 entity.addPart("image[]", new FileBody(new File(bookArray.get(i))));
+            }
+            if(!this.deletedImages.isEmpty()){
+                for (int i = 0; i <deletedImages.size() ; i++) {
+                    entity.addPart("del_items[]", new StringBody(deletedImages.get(i)));
+                }
             }
             entity.addPart("user_id",new StringBody(this.book.getId()));
             entity.addPart("title",new StringBody(this.book.getTitle(),ContentType.create("text/plain", HTTP.UTF_8)));
@@ -125,6 +139,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
             entity.addPart("email",new StringBody(this.book.geteMail(),ContentType.APPLICATION_JSON));
             entity.addPart("mobile_number",new StringBody(this.book.getMobileNum(),ContentType.APPLICATION_JSON));
             entity.addPart("description",new StringBody(this.book.getDescription(),ContentType.APPLICATION_JSON));
+
 
 
 
@@ -175,6 +190,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         }else{
             Intent intent=new Intent(context,UploadRetryReceiver.class);
             intent.putExtra("book",this.book);
+            intent.putStringArrayListExtra("deletedImages",this.deletedImages);
           /*  ArrayList<String> arrayList=new ArrayList<>();
             arrayList.add("davigaleee");
             intent.putStringArrayListExtra("picList",arrayList);*/

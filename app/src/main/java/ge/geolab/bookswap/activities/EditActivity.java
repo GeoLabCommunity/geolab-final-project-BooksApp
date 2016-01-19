@@ -115,7 +115,10 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
     private Book bookAd = new Book();
     private HashMap<Integer, String> pictureMap = new HashMap<>();
     private ArrayList<String> pictureArray;
+    private HashMap<Integer,String> deletedItemsMap=new HashMap<>();
+    private ArrayList<String> deletedItems=new ArrayList<>();
     private Context context=this;
+    private Book editBook = new Book();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,6 +158,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
                         view.getId();
                         //removing picture from container and HashMap
                         pictureMap.remove(view.getId());
+                        deletedItems.add(deletedItemsMap.get(view.getId()));
                         owner.removeView(view);
                         v.setVisibility(View.GONE);
                         v.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
@@ -204,12 +208,11 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
         addSpinner(R.array.category_array, categorySpinner);
         addSpinner(R.array.condition_array, bookConditionSpinner);
         setSpinnerListeners();
-
+        editBook= (Book) getIntent().getSerializableExtra("book");
         //Get Data to Edit
         getEditData();
     }
     private void getEditData(){
-        final Book editBook= (Book) getIntent().getSerializableExtra("book");
         inputAuthor.setText(editBook.getAuthor());
         inputTitle.setText(editBook.getTitle());
         inputDescription.setText(editBook.getDescription());
@@ -220,13 +223,22 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
         adTypeSpinner.setSelection(Integer.parseInt(editBook.getAdType())-1);
         categorySpinner.setSelection(Integer.parseInt(editBook.getCategory())-1);
         bookConditionSpinner.setSelection(Integer.parseInt(editBook.getCondition()));
-        OkHttpClient okHttpClient = new OkHttpClient();
+        //OkHttpClient okHttpClient = new OkHttpClient();
 
 
         for (int i = 0; i <editBook.getPictures().size() ; i++) {
+            id++;
 
+            final ImageView imageView=new ImageView(context);
+            imageView.setId(id);
+            imageView.setOnLongClickListener((View.OnLongClickListener) context);
+            deletedItemsMap.put(id, editBook.getPictures().get(i));
+            picContainer.addView(imageView);
+            Picasso picasso = Picasso.with(context);
+            picasso.load(pictureUrl+editBook.getPictures().get(i)).resize(UnitConverters.getPx(200, getResources()),
+                    UnitConverters.getPx(200, getResources())).centerInside().into(imageView);
 
-            Request request = new Request.Builder()
+          /*  Request request = new Request.Builder()
                   .url(pictureUrl+editBook.getPictures().get(i)).build();
 
             final int finalI = i;
@@ -246,7 +258,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
                     source.close();
                     sink.close();
                     id++;
-                    pictureMap.put(id, outputFile[0].getPath());
+                    deletedItemsMap.put(id, editBook.getPictures().get(finalI));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -258,8 +270,8 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
                     });
 
                 }
-                
-            });
+
+            });*/
 
 
         }
@@ -377,6 +389,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
         bookAd.seteMail(email);
         bookAd.setMobileNum(mobileNum);
         bookAd.setPictures(pictureArray);
+        bookAd.setServer_id(editBook.getServer_id());
 
     }
 
@@ -511,7 +524,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
             createBook();
             if (validateFields()) {
 
-                new UploadFileToServer(this, bookAd).execute();
+                new UploadFileToServer(this, bookAd,deletedItems).execute();
                 finish();
             }
             return true;

@@ -53,7 +53,7 @@
         <item>ვეძებ</item>
     </string-array>
     <string name="title_activity_details">დეტალური გვერდი</string>
-    <string name="title_activity_profile"> </string>
+    <string name="title_activity_profile">ჩემი წიგნები</string>
     <string name="action_send">დადასტურება</string>
     <string name="remove">წაშლა</string>
     <string name="edit">რედაქტირება</string>
@@ -62,4 +62,7 @@
     <string name="search_hint">ჩაწერეთ წიგნის სახელი</string>
     <string name="title_activity_search_results">ძებნა</string>
     <string name="remove_entry_url">http://192.168.1.100/geolabclass/welcome/delete/list/id/</string>
+    <string name="search_query_url">http://192.168.1.100/geolabclass/welcome/search/</string>
+    <string name="data_is_loading">მონაცემები იტვირთება</string>
+    <string name="connection_is_needed">საჭიროა ინტერნერთან კავშირი</string>
 </resources>

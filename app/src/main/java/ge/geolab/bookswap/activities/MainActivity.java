@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -88,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.navigation_view) NavigationView navigationView;
     @Bind(R.id.fab) FloatingActionButton fab;
+    @BindString(R.string.search_query_url) String queryUrl;
     CircleImageView userPicture;
     TextView fbUserNameTextView;
     private MainActivityPagerAdapter ViewPagerAdapter;
@@ -184,10 +186,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onSuggestionClick(int position) {
                 searchView.setQuery(suggestions.get(position).getTitle(), false);
-                searchView.clearFocus();
-                Intent intent=new Intent(MainActivity.this,DetailsActivity.class);
+                //searchView.clearFocus();
+         /*       Intent intent=new Intent(MainActivity.this,DetailsActivity.class);
                 intent.putExtra("book",suggestions.get(position));
-                startActivity(intent);
+                startActivity(intent);*/
                 //doSearch(suggestions.get(position));
                 return true;
             }
@@ -201,8 +203,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(final String newText) {
                 RequestQueue requestQueue= Volley.newRequestQueue(context);
-
-               StringRequest jsonArrayRequest=new StringRequest(Request.Method.POST,"http://192.168.1.100/geolabclass/welcome/search/"+newText,new Response.Listener<String>() {
+                if(!newText.isEmpty()){
+               StringRequest jsonArrayRequest=new StringRequest(Request.Method.POST,queryUrl+newText,new Response.Listener<String>() {
 
                     @Override
                     public void onResponse(String response) {
@@ -214,30 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 JsonObject obj = jsonArray.get(i).getAsJsonObject();
                                 Book bookObject = new Book();
-                                bookObject.setCategory(obj.get("category_id").getAsString());
-                                bookObject.setAdType(obj.get("type").getAsString());
-                                bookObject.setCondition(obj.get("state").getAsString());
-                                bookObject.setAuthor(obj.get("author").getAsString());
                                 bookObject.setTitle(obj.get("title").getAsString());
-                                bookObject.setLocation(obj.get("location").getAsString());
-                                bookObject.setExchangeItem(obj.get("item").getAsString());
-                                bookObject.setDescription(obj.get("description").getAsString());
-                                bookObject.seteMail(obj.get("email").getAsString());
-                                bookObject.setMobileNum(obj.get("mobile").getAsString());
-                                JsonArray imgArrayJSON = obj.get("img").getAsJsonArray();
-                                ArrayList<String> imgArray = new ArrayList<>();
-                                for (int k = 0; k < imgArrayJSON.size(); k++) {
-
-
-                                    if(imgArrayJSON.get(k).isJsonNull()){
-                                      imgArray.add("null");
-                                    }else{
-                                        imgArray.add(imgArrayJSON.get(k).getAsString());
-                                    }
-
-                                }
-                                bookObject.setPictures(imgArray);
-                                bookObject.setId(obj.get("user_id").getAsString());
 
                                 suggestions.add(bookObject);
                             }
@@ -288,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
                        return params;
                    }
                };
-                requestQueue.add(jsonArrayRequest);
+                requestQueue.add(jsonArrayRequest);}
                 return false;
             }
         });

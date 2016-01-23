@@ -106,7 +106,7 @@ public class BookSwapFragment extends Fragment {
 
                 fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
 
-                pagingSnackbar.setActionTextColor(Color.RED).setAction("Dismiss", new View.OnClickListener() {
+                pagingSnackbar.setActionTextColor(Color.RED).setAction("Cancel", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 

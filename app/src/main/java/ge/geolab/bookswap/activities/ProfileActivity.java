@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -41,6 +43,7 @@ import butterknife.ButterKnife;
 import co.dift.ui.SwipeToAction;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.Book;
+import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.utils.UnitConverters;
 import ge.geolab.bookswap.views.adapters.ProfileListAdapter;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -61,7 +64,10 @@ public class ProfileActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        SpannableString title= new SpannableString(getResources().getString(R.string.title_activity_profile));
+        title.setSpan(new TypeFaceSpan(this, "bpg_nino_mtavruli_bold.ttf"), 0, title.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        setTitle(title);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

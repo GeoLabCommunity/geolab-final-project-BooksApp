@@ -18,6 +18,8 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.Menu;
@@ -62,6 +64,7 @@ import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.network.UploadFileToServer;
 import ge.geolab.bookswap.utils.BookCamera;
+import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.utils.UnitConverters;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -177,6 +180,12 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
         addSpinner(R.array.category_array,categorySpinner);
         addSpinner(R.array.condition_array,bookConditionSpinner);
         setSpinnerListeners();
+
+        SpannableString title= new SpannableString(getResources().getString(R.string.title_activity_add_book));
+        title.setSpan(new TypeFaceSpan(this, "bpg_nino_mtavruli_bold.ttf"), 0, title.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        setTitle(title);
+
     }
 
     @Override

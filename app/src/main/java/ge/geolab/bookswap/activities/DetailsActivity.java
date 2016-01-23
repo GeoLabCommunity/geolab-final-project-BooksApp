@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -47,6 +49,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.utils.CategoryArrays;
+import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.views.customViews.ExpandableTextView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -76,6 +79,10 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        SpannableString title= new SpannableString(getResources().getString(R.string.title_activity_details));
+        title.setSpan(new TypeFaceSpan(this, "bpg_nino_mtavruli_bold.ttf"), 0, title.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        setTitle(title);
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
         Animation fade_in = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.fade_in);
@@ -270,7 +277,12 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     private void createSuggestionSlider(final ArrayList<Book> list){
         for (int i = 0; i <list.size() ; i++) {
             TextSliderView textSliderView=new TextSliderView(this);
-            textSliderView.image(getResources().getString(R.string.picture_url)+list.get(i).getFrontImageUrl()).setScaleType(BaseSliderView.ScaleType.CenterCrop);
+            if(list.get(i).getPictures().get(0).equals("null")){
+                textSliderView.image(R.drawable.book_cover).setScaleType(BaseSliderView.ScaleType.CenterCrop);
+
+            }else {
+                textSliderView.image(getResources().getString(R.string.picture_url) + list.get(i).getFrontImageUrl()).setScaleType(BaseSliderView.ScaleType.CenterCrop);
+            }
             textSliderView.description(list.get(i).getTitle());
             final int finalI = i;
             textSliderView.setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {

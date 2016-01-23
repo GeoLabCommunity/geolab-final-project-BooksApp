@@ -48,11 +48,17 @@ public class BookAdListAdapter extends RecyclerView.Adapter<BookAdListAdapter.My
 
        // int size = (int) Math.ceil(Math.sqrt(MAX_WIDTH * MAX_HEIGHT));
 
-        Picasso.with(context)
-                .load(context.getString(R.string.picture_url) + bookArray.get(position).getFrontImageUrl())
-                .transform(new BitmapTransform(MAX_WIDTH, MAX_HEIGHT))
-                .into(holder.photo);
-
+        if(bookArray.get(position).getPictures().get(0).equals("null")){
+            Picasso.with(context)
+                    .load(R.drawable.book_cover)
+                    .transform(new BitmapTransform(MAX_WIDTH, MAX_HEIGHT))
+                    .into(holder.photo);
+        }else {
+            Picasso.with(context)
+                    .load(context.getString(R.string.picture_url) + bookArray.get(position).getFrontImageUrl())
+                    .transform(new BitmapTransform(MAX_WIDTH, MAX_HEIGHT))
+                    .into(holder.photo);
+        }
     }
 
     @Override

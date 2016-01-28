@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="facebook_app_id">984640668262403</string>
+    <string name="gcm_defaultSenderId">577999243620</string>
     <string name="FILE_UPLOAD_URL">http://192.168.1.100/geolabclass/welcome/upload</string>
     <string name="login">ავტორიზაცია</string>
     <string name="logout">გამოსვლა</string>
@@ -63,6 +64,7 @@
     <string name="title_activity_search_results">ძებნა</string>
     <string name="remove_entry_url">http://192.168.1.100/geolabclass/welcome/delete/list/id/</string>
     <string name="search_query_url">http://192.168.1.100/geolabclass/welcome/search/</string>
+    <string name="register_messaging_url">http://192.168.1.100/geolabclass/welcome/register_token/</string>
     <string name="data_is_loading">მონაცემები იტვირთება</string>
     <string name="connection_is_needed">საჭიროა ინტერნერთან კავშირი</string>
 </resources>

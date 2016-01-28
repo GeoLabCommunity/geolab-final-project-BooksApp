@@ -6,6 +6,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <permission android:name="ge.geolab.bookswap.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="ge.geolab.bookswap.permission.C2D_MESSAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
 
@@ -53,9 +58,7 @@
                 android:value="ge.geolab.bookswap.activities.MainActivity" />
         </activity>
 
-        <receiver
-            android:name=".network.UploadRetryReceiver"
-            android:enabled="true" />
+
 
         <activity
             android:name=".activities.DetailsActivity"
@@ -101,6 +104,34 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        <receiver
+            android:name=".network.UploadRetryReceiver"
+            android:enabled="true" />
+        <service android:name=".network.cloudMessaging.RegistrationIntentService" android:exported="false"/>
+        <service
+            android:name=".network.cloudMessaging.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.example.gcm" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".network.cloudMessaging.GcmMessageHandler"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

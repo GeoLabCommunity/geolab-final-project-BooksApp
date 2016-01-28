@@ -56,6 +56,7 @@ public class BookAdListAdapter extends RecyclerView.Adapter<BookAdListAdapter.My
         }else {
             Picasso.with(context)
                     .load(context.getString(R.string.picture_url) + bookArray.get(position).getFrontImageUrl())
+                    .placeholder(R.drawable.progress_animation)
                     .transform(new BitmapTransform(MAX_WIDTH, MAX_HEIGHT))
                     .into(holder.photo);
         }

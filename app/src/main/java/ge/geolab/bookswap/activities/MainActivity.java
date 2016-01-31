@@ -415,6 +415,13 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                             startActivity(intent);
                         }
+                        return true;
+                    case R.id.offers:
+                        if(checkUserLoginStatus()) {
+                            Intent intent = new Intent(MainActivity.this, OffersActivity.class);
+                            startActivity(intent);
+                        }
+                        return true;
                     default:
                         return true;
 

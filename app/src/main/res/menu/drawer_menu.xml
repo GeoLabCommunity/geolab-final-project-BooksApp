@@ -52,7 +52,12 @@
             android:checkable="false"
             android:title="@string/profile" />
 
-
+        <item
+            android:id="@+id/offers"
+            android:checked="false"
+            android:icon="@drawable/ic_exchange"
+            android:checkable="false"
+            android:title="@string/offers" />
 
     </group>
 </menu>

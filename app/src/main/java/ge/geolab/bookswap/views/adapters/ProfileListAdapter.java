@@ -102,54 +102,5 @@ public class ProfileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             authorView= (TextView) itemView.findViewById(R.id.book_author);
         }
     }
-   /* @Override
-    public int getCount() {
-        return this.bookList.size();
-    }
 
-    @Override
-    public Object getItem(int position) {
-        return this.bookList.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View itemView;
-        ViewHolder holder = null;
-        if (convertView == null) {
-            itemView = View.inflate(context, R.layout.profile_list_item, null);
-            ImageView profileImageView = (ImageView) itemView.findViewById(R.id.book_image);
-            TextView titleView = (TextView) itemView.findViewById(R.id.book_title);
-
-
-            holder = new ViewHolder();
-            holder.profileImageView = profileImageView;
-            holder.titleView = titleView;
-
-            itemView.setTag(holder);
-        } else {
-            itemView = convertView;
-            holder = (ViewHolder) itemView.getTag();
-        }
-
-
-        Book book = (Book) getItem(position);
-
-        Picasso.with(context).load(book.getFrontImageUrl()).into(holder.profileImageView);
-        holder.titleView.setText(book.getTitle());
-
-
-
-        return itemView;
-    }
-
-    private class ViewHolder {
-        ImageView profileImageView;
-        TextView titleView;
-    }*/
 }

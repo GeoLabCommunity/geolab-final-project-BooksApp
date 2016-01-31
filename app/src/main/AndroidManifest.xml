@@ -8,8 +8,11 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <permission android:name="ge.geolab.bookswap.permission.C2D_MESSAGE"
+
+    <permission
+        android:name="ge.geolab.bookswap.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="ge.geolab.bookswap.permission.C2D_MESSAGE" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -20,9 +23,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
-
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
@@ -32,10 +33,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".activities.SearchResultsActivity" />
-
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -57,9 +58,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ge.geolab.bookswap.activities.MainActivity" />
         </activity>
-
-
-
         <activity
             android:name=".activities.DetailsActivity"
             android:label="@string/title_activity_details"
@@ -92,46 +90,66 @@
         <activity
             android:name=".activities.SearchResultsActivity"
             android:label="@string/title_activity_search_results"
+            android:launchMode="singleTop"
             android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTop">
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ge.geolab.bookswap.activities.MainActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-            <meta-data android:name="android.app.searchable"
+
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+
         <receiver
             android:name=".network.UploadRetryReceiver"
             android:enabled="true" />
-        <service android:name=".network.cloudMessaging.RegistrationIntentService" android:exported="false"/>
+
+        <service
+            android:name=".network.cloudMessaging.RegistrationIntentService"
+            android:exported="false" />
         <service
             android:name=".network.cloudMessaging.MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
+
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="com.example.gcm" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".network.cloudMessaging.GcmMessageHandler"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".activities.OffersActivity"
+            android:label="@string/title_activity_offers"
+            android:parentActivityName=".activities.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ge.geolab.bookswap.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

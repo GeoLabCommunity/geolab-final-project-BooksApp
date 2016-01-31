@@ -8,6 +8,7 @@
     <string name="login">ავტორიზაცია</string>
     <string name="logout">გამოსვლა</string>
     <string name="profile">პირადი კაბინეტი</string>
+    <string name="offers">შემოთავაზებები</string>
     <string name="login_success">ავტორიზაცია დასრულდა წარმატებით</string>
     <string name="logout_success">პროფილი დატოვეთ წარმატებით</string>
     <string name="drawer_open">მენიუ ღიაა</string>
@@ -65,6 +66,10 @@
     <string name="remove_entry_url">http://192.168.1.100/geolabclass/welcome/delete/list/id/</string>
     <string name="search_query_url">http://192.168.1.100/geolabclass/welcome/search/</string>
     <string name="register_messaging_url">http://192.168.1.100/geolabclass/welcome/register_token/</string>
+    <string name="book_change_POST_url">http://192.168.1.100/geolabclass/welcome/send_token/</string>
     <string name="data_is_loading">მონაცემები იტვირთება</string>
     <string name="connection_is_needed">საჭიროა ინტერნერთან კავშირი</string>
+    <string name="offer_book">შეთავაზე წიგნი</string>
+    <string name="blank">…</string>
+    <string name="title_activity_offers">OffersActivity</string>
 </resources>

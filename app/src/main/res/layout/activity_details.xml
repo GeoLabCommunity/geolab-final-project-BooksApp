@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="ge.geolab.bookswap.activities.DetailsActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,7 +18,25 @@
         >
         <include layout="@layout/content_details" />
     </android.support.v4.widget.NestedScrollView>
-
+        <ge.geolab.bookswap.views.customViews.RecycleBinView
+            android:id="@+id/offer_book_button"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:orientation="vertical"
+            android:background="@drawable/offer_click"
+            android:layout_alignParentBottom="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:clickable="true"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:text="@string/offer_book"
+                style="@style/offerbook_text_style"/>
+        </ge.geolab.bookswap.views.customViews.RecycleBinView>
+    </RelativeLayout>
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

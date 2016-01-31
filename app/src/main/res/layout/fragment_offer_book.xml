@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avloadingIndicatorView"
+        android:layout_width="80dp"
+    android:layout_height="80dp"
+        android:layout_gravity="center"
+    android:visibility="gone"
+    app:indicator="BallScaleMultiple"
+    app:indicator_color="@color/colorAccent"
+    />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/offer_book_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:visibility="gone"
+        />
+
+</LinearLayout>

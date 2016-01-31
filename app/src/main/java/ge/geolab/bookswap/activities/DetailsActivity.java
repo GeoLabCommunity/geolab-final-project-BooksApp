@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.daimajia.slider.library.Indicators.PagerIndicator;
 import com.daimajia.slider.library.SliderLayout;
@@ -47,6 +48,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import ge.geolab.bookswap.R;
+import ge.geolab.bookswap.fragments.MyBookListDialog;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.utils.CategoryArrays;
 import ge.geolab.bookswap.utils.TypeFaceSpan;
@@ -70,6 +72,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     @Bind(R.id.arrow) ImageView arrowView;
     @Bind(R.id.custom_indicator) PagerIndicator pagerIndicator;
     @Bind(R.id.suggestions_slider) SliderLayout suggestionsSlider;
+    @Bind(R.id.ad_type) TextView adTypeView;
     @BindString(R.string.list_array_url) String jsonUrl;
     private Book book;
 
@@ -153,14 +156,24 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
 
         }
         titleView.setText(book.getTitle());
+        if(!book.getAuthor().isEmpty())
         authorView.setText(book.getAuthor());
+        if(!book.getDescription().isEmpty())
         descriptionView.setText(book.getDescription());
         conditionView.setText(CategoryArrays.conditions[Integer.parseInt(book.getCondition())]);
         categoryView.setText(CategoryArrays.categories[Integer.parseInt(book.getCategory())]);
+        if(!book.getLocation().isEmpty())
         locationView.setText(book.getLocation());
         exchangeItemView.setText(book.getExchangeItem());
+        if(!book.geteMail().isEmpty())
         emailView.setText(book.geteMail());
+        if(!book.getMobileNum().isEmpty())
         mobileNumView.setText(book.getMobileNum());
+        String adType=CategoryArrays.adTypes[Integer.parseInt(book.getAdType())];
+        adTypeView.setText(adType);
+        if(book.getAdType().equals("2")){
+            exchangeItemView.setVisibility(View.GONE);
+        }
         final String[] id = {""};
         Picasso.with(this).load("https://graph.facebook.com/"+ book.getId()+"/picture?type=large").into(profilePicView);
 
@@ -231,6 +244,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
                                     }
                                     bookObject.setPictures(imgArray);
                                     bookObject.setId(obj.getString("user_id"));
+                                    bookObject.setServer_id(obj.getString("id"));
                                     list.add(bookObject);
 
                                 } catch (JSONException e) {
@@ -307,4 +321,10 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     public void onSliderClick(BaseSliderView slider) {
 
     }
+    @OnClick(R.id.offer_book_button)
+    public void onClickOffer(View view){
+        MyBookListDialog myBookListDialog=MyBookListDialog.newInstance(book.getId(),book.getServer_id());
+        myBookListDialog.show(getSupportFragmentManager(),"bookOffers");
+    }
+
 }

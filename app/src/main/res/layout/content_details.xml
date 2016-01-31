@@ -58,6 +58,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
                     android:layout_marginTop="@dimen/details_view_margin_top"
+                    android:text="@string/blank"
                     style="@style/add_book_text"/>
             </TableRow>
             <TableRow>
@@ -106,6 +107,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
                     android:layout_marginTop="@dimen/details_view_margin_top"
+                    android:text="@string/blank"
                     style="@style/add_book_text"/>
             </TableRow>
             <TableRow>
@@ -117,6 +119,22 @@
                     style="@style/add_book_text"/>
                 <TextView
                     android:id="@+id/exchange_item"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/details_view_margin_top"
+                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    style="@style/add_book_text"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:text="@string/type_of_ad"
+                    style="@style/add_book_text"/>
+                <TextView
+                    android:id="@+id/ad_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -142,6 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
                     android:layout_gravity="bottom|center_horizontal"
+                    android:text="@string/blank"
                     style="@style/add_book_text"
                     android:autoLink="email"
                     />
@@ -158,16 +177,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
                     android:layout_gravity="bottom|center_horizontal"
+                    android:text="@string/blank"
                     style="@style/add_book_text"
                     android:autoLink="phone"
                     />
             </TableRow>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="@dimen/details_view_margin_top"
-                android:background="@color/lightGray"
-                />
+            <View android:background="@color/divider"
+                android:layout_width="fill_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="@dimen/details_view_margin_top"/>
+
             <LinearLayout
                 android:id="@+id/description_container"
                 android:layout_width="match_parent"
@@ -182,7 +201,8 @@
                     android:layout_weight=".8"
                     android:layout_gravity="center"
                     android:text="@string/details_of_book"
-                    style="@style/description_title_text"/>
+                    android:textStyle="bold"
+                    style="@style/contact_information_title_text"/>
                 <ImageView
                     android:id="@+id/arrow"
                     android:layout_width="wrap_content"
@@ -206,7 +226,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/content_card"
-        android:layout_marginTop="@dimen/details_cardview_margin_top">
+        android:layout_marginTop="@dimen/details_cardview_margin_top"
+        android:layout_marginBottom="50dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

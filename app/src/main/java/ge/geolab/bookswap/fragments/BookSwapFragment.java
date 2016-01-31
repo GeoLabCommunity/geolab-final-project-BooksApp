@@ -255,6 +255,7 @@ public class BookSwapFragment extends Fragment {
                 }
                 bookObject.setPictures(imgArray);
                 bookObject.setId(obj.getString("user_id"));
+                bookObject.setServer_id(obj.getString("id"));
                 lastItemIdInJson = obj.getString("id");
                 list.add(bookObject);
 

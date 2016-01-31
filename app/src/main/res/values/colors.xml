@@ -12,4 +12,5 @@
     <color name="transparent_red">#dedf1515</color>
     <color name="background">#EEEEEE</color>
     <color name="divider">#CCC</color>
+    <color name="transparent_blue">#da283593</color>
 </resources>

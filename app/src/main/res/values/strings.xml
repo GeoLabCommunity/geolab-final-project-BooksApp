@@ -67,9 +67,12 @@
     <string name="search_query_url">http://192.168.1.100/geolabclass/welcome/search/</string>
     <string name="register_messaging_url">http://192.168.1.100/geolabclass/welcome/register_token/</string>
     <string name="book_change_POST_url">http://192.168.1.100/geolabclass/welcome/send_token/</string>
+    <string name="check_book_offer_status_url">http://192.168.1.100/geolabclass/welcome/check_exchange/</string>
+    <string name="get_my_offers_url">http://192.168.1.100/geolabclass/welcome/exchange_list/</string>
     <string name="data_is_loading">მონაცემები იტვირთება</string>
     <string name="connection_is_needed">საჭიროა ინტერნერთან კავშირი</string>
     <string name="offer_book">შეთავაზე წიგნი</string>
     <string name="blank">…</string>
     <string name="title_activity_offers">OffersActivity</string>
+    <string name="offer_dialog_no_book_found">ამ ფუნქციის გამოსაყენებლად საჭიროა დაამატოთ წიგნი</string>
 </resources>

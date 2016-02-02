@@ -110,7 +110,8 @@
                     android:text="@string/blank"
                     style="@style/add_book_text"/>
             </TableRow>
-            <TableRow>
+            <TableRow
+                android:id="@+id/exchange_row">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"

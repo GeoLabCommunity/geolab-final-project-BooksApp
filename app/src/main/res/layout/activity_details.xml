@@ -27,6 +27,7 @@
             android:layout_alignParentBottom="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:clickable="true"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="wrap_content"

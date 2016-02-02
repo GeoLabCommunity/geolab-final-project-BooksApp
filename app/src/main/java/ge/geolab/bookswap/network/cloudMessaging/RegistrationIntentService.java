@@ -15,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -36,7 +37,8 @@ public class RegistrationIntentService extends IntentService {
     public static final String GCM_TOKEN = "gcmToken";
     private Context context=this;
     private String registerUrl;
-    private String userId= Profile.getCurrentProfile().getId();
+
+    private String userId;
 
     public RegistrationIntentService() {
         super(TAG);
@@ -45,6 +47,8 @@ public class RegistrationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if(AccessToken.getCurrentAccessToken()!=null)
+        userId= Profile.getCurrentProfile().getId();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
          registerUrl=getResources().getString(R.string.register_messaging_url);

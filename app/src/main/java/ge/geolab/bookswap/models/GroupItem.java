@@ -9,7 +9,7 @@ import java.util.List;
 public class GroupItem {
     String title;
     List<Book> items = new ArrayList<Book>();
-
+    String categoryId;
     public GroupItem() {
 
     }
@@ -30,9 +30,19 @@ public class GroupItem {
         this.items = items;
     }
 
-    public GroupItem(String title, List<Book> items){
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public GroupItem(String title, String categoryId, List<Book> items){
         this.title=title;
         this.items=items;
+        this.categoryId=categoryId;
+
 
     }
 }

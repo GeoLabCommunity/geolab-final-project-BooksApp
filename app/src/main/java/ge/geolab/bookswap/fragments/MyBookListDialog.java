@@ -11,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -29,12 +30,15 @@ import com.wang.avi.AVLoadingIndicatorView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.greenrobot.event.EventBus;
 import ge.geolab.bookswap.R;
+import ge.geolab.bookswap.events.HideOfferButtonEvent;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.views.adapters.BookOfferListAdapter;
 import ge.geolab.bookswap.views.customListeners.ItemClickSupport;
@@ -61,6 +65,7 @@ private String TAG="Offer Dialog Volley";
     private ArrayList<Book> bookList;
     private BookOfferListAdapter adapter;
     private RecyclerView mRecyclerView;
+    private TextView dialogMessageView;
     private static AVLoadingIndicatorView spinnerView;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -70,6 +75,7 @@ private String TAG="Offer Dialog Volley";
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View v=inflater.inflate(R.layout.fragment_offer_book, null);
         spinnerView= (AVLoadingIndicatorView) v.findViewById(R.id.avloadingIndicatorView);
+        dialogMessageView= (TextView) v.findViewById(R.id.dialog_message);
         bookList=new ArrayList<>();
         LinearLayoutManager linearLayoutManager=new LinearLayoutManager(getActivity());
         mRecyclerView= (RecyclerView) v.findViewById(R.id.offer_book_list);
@@ -85,11 +91,10 @@ private String TAG="Offer Dialog Volley";
 
         builder.setView(v)
                 .setTitle("აირჩიეთ წიგნი")
-                // Add action buttons
-                .setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
+                .setPositiveButton("დახურვა", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        // sign in the user ...
+
                     }
                 });
 
@@ -102,8 +107,9 @@ private String TAG="Offer Dialog Volley";
                         Profile.getCurrentProfile().getId(),
                         bookList.get(position).getServer_id(),
                         getArguments().getString("receiverId"),
-                        getArguments().getString("receiver_book_id"));
-                dialog.dismiss();
+                        getArguments().getString("receiver_book_id"),
+                        spinnerView,
+                        dialogMessageView);
             }
         });
 
@@ -111,7 +117,7 @@ private String TAG="Offer Dialog Volley";
 
     }
 
-
+/*
     private Dialog showList() {
        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity())
                 .setTitle("აირჩიეთ წიგნი")
@@ -119,7 +125,7 @@ private String TAG="Offer Dialog Volley";
         builder.setView(mRecyclerView);
 
         return builder.create();
-    }
+    }*/
 
     private void fetchMyBookData(String url, String id,
                                  final ArrayList<Book> list,
@@ -129,7 +135,7 @@ private String TAG="Offer Dialog Volley";
 
            spinner.setVisibility(View.VISIBLE);
 
-        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url+"0/user_id/"+id, new Response.Listener<JSONArray>() {
+        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url+"0/user_id/"+id+"/type/1", new Response.Listener<JSONArray>() {
 
 
 
@@ -159,6 +165,10 @@ private String TAG="Offer Dialog Volley";
                  spinner.setVisibility(View.GONE);
                  mRecyclerView.setVisibility(View.VISIBLE);
                  adapter.notifyDataSetChanged();
+                if(list.isEmpty()){
+                    dialogMessageView.setVisibility(View.VISIBLE);
+                    dialogMessageView.setText(getString(R.string.offer_dialog_no_book_found));
+                }
 
             }
 
@@ -178,15 +188,27 @@ private String TAG="Offer Dialog Volley";
 
     }
 
-    private void sendData(String url, final String myId, final String myBookId, final String receiverId, final String receiverBookId){
+    private void sendData(String url,
+                          final String myId,
+                          final String myBookId,
+                          final String receiverId,
+                          final String receiverBookId,
+                          final AVLoadingIndicatorView spinner,
+                          final TextView messageView){
+        spinner.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
         RequestQueue requestQueue= Volley.newRequestQueue(getActivity());
         StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST,
                 url + "u_id/"+myId+"/book_id/"+myBookId+"/r_id/"+receiverId+"/change_id/"+receiverBookId, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
-               // Toast.makeText(getActivity(),response,Toast.LENGTH_LONG).show();
-
+                spinner.setVisibility(View.GONE);
+                if(response!=null) {
+                    messageView.setText(response);
+                    messageView.setVisibility(View.VISIBLE);
+                    EventBus.getDefault().post(new HideOfferButtonEvent(true));
+                }
             }
 
         }, new Response.ErrorListener() {
@@ -194,7 +216,9 @@ private String TAG="Offer Dialog Volley";
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "POST Error: " + error.getMessage());
-
+                spinner.setVisibility(View.GONE);
+                messageView.setText(getString(R.string.fb_error_snackbar_msg));
+                messageView.setVisibility(View.VISIBLE);
             }
 
         }) {

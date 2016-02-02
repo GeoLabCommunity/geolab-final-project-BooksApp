@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -14,9 +15,12 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -34,6 +38,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.Profile;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -41,18 +46,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import ge.geolab.bookswap.R;
+import ge.geolab.bookswap.events.HideOfferButtonEvent;
 import ge.geolab.bookswap.fragments.MyBookListDialog;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.utils.CategoryArrays;
 import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.views.customViews.ExpandableTextView;
+import ge.geolab.bookswap.views.customViews.RecycleBinView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class DetailsActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener{
@@ -73,8 +83,13 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     @Bind(R.id.custom_indicator) PagerIndicator pagerIndicator;
     @Bind(R.id.suggestions_slider) SliderLayout suggestionsSlider;
     @Bind(R.id.ad_type) TextView adTypeView;
+    @Bind(R.id.offer_book_button) RecycleBinView offerButton;
+    @Bind(R.id.about_user) CardView aboutUserCardView;
+    @Bind(R.id.exchange_row) TableRow exchangeRow;
     @BindString(R.string.list_array_url) String jsonUrl;
+    @BindString(R.string.check_book_offer_status_url) String checkOfferUrl;
     private Book book;
+    private String TAG="Offer check request";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +101,16 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         title.setSpan(new TypeFaceSpan(this, "bpg_nino_mtavruli_bold.ttf"), 0, title.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         setTitle(title);
+        Animation slide_down = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.slide_down_from_bottom);
+        Animation slide_up = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.slide_up_from_bottom);
+        offerButton.setInAnimation(slide_up);
+        offerButton.setOutAnimation(slide_down);
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
-        Animation fade_in = AnimationUtils.loadAnimation(getApplicationContext(),
-                R.anim.fade_in);
-        descriptionView.setInAnimation(fade_in);
+        Animation scale_up = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.scale_up);
+        descriptionView.setInAnimation(scale_up);
        book= (Book) getIntent().getSerializableExtra("book");
            imageSlider.setCustomIndicator(pagerIndicator);
         setData(book);
@@ -113,7 +134,8 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         suggestionsSlider.stopAutoCycle();
         getSuggestionsData(jsonUrl,book.getId());
-
+        if(AccessToken.getCurrentAccessToken()!=null)
+        checkOfferStatus(checkOfferUrl,Profile.getCurrentProfile().getId(),book.getServer_id(),book.getAdType());
 
     }
     @OnClick(R.id.description_container)
@@ -164,6 +186,8 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         categoryView.setText(CategoryArrays.categories[Integer.parseInt(book.getCategory())]);
         if(!book.getLocation().isEmpty())
         locationView.setText(book.getLocation());
+        if(book.getAdType().equals("2"))
+            exchangeRow.setVisibility(View.GONE);
         exchangeItemView.setText(book.getExchangeItem());
         if(!book.geteMail().isEmpty())
         emailView.setText(book.geteMail());
@@ -311,9 +335,15 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         }
     }
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+    @Override
     protected void onStop() {
         imageSlider.stopAutoCycle();
         suggestionsSlider.stopAutoCycle();
+        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -325,6 +355,53 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     public void onClickOffer(View view){
         MyBookListDialog myBookListDialog=MyBookListDialog.newInstance(book.getId(),book.getServer_id());
         myBookListDialog.show(getSupportFragmentManager(),"bookOffers");
+    }
+
+    public void onEvent(HideOfferButtonEvent event){
+        if(event.isMessageSent){
+            offerButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void checkOfferStatus(String url, final String myId, final String bookId, final String adType){
+        RequestQueue requestQueue= Volley.newRequestQueue(this);
+        StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST,
+                url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+
+                   if(adType.equals("1") && response.equals("false")){
+                       offerButton.setVisibility(View.VISIBLE);
+                   }
+
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "POST Error: " + error.getMessage());
+
+            }
+
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("u_id", myId);
+                params.put("book_id", bookId);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/x-www-form-urlencoded");
+                return params;
+            }
+        };
+        requestQueue.add(jsonArrayRequest);
     }
 
 }

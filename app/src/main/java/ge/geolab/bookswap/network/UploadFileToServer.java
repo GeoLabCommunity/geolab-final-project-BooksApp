@@ -68,7 +68,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
         // setting progress bar to zero
         mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setContentTitle("")
+        mBuilder.setContentTitle(this.context.getString(R.string.app_name))
                 .setContentText("მიმდინარეობს ატვირთვა")
                 .setSmallIcon(R.drawable.ic_upload)
                 .setProgress(100,0,false);
@@ -181,7 +181,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 
                 mBuilder.setContentText(jsonResponse.getString("message"));
                 // Removes the progress bar
-                mBuilder.setProgress(0, 0, false);
+                mBuilder.setProgress(0, 0, false).setSmallIcon(R.drawable.ic_check);
                 mNotifyManager.notify(id, mBuilder.build());
 
             } catch (JSONException e) {

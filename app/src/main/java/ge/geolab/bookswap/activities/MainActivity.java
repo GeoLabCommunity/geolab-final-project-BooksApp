@@ -74,8 +74,10 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.greenrobot.event.EventBus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import ge.geolab.bookswap.R;
+import ge.geolab.bookswap.events.ClearSavedInstanceEvent;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.network.CustomJsonRequest;
 import ge.geolab.bookswap.network.cloudMessaging.RegistrationIntentService;
@@ -86,20 +88,27 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Bind(R.id.view_pager) ViewPager MainActivityViewPager;
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.tabs) CustomTabLayout tabLayout;
-    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
-    @Bind(R.id.navigation_view) NavigationView navigationView;
-    @Bind(R.id.fab) FloatingActionButton fab;
-    @BindString(R.string.search_query_url) String queryUrl;
+    @Bind(R.id.view_pager)
+    ViewPager MainActivityViewPager;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.tabs)
+    CustomTabLayout tabLayout;
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @Bind(R.id.navigation_view)
+    NavigationView navigationView;
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
+    @BindString(R.string.search_query_url)
+    String queryUrl;
     CircleImageView userPicture;
     TextView fbUserNameTextView;
     private MainActivityPagerAdapter ViewPagerAdapter;
     CallbackManager callbackManager;
     AccessToken accessToken;
     AccessTokenTracker accessTokenTracker;
-    Context context=this;
+    Context context = this;
     private int categoryId;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
@@ -125,22 +134,21 @@ public class MainActivity extends AppCompatActivity {
                     AccessToken currentAccessToken) {
                 // Set the access token using
                 // currentAccessToken when it's loaded or set.
-                accessToken=currentAccessToken;
+                accessToken = currentAccessToken;
             }
         };
-        accessToken=AccessToken.getCurrentAccessToken();
+        accessToken = AccessToken.getCurrentAccessToken();
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         createDrawerButton();
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 
         View header = navigationView.getHeaderView(0);
-        userPicture= (CircleImageView) header.findViewById(R.id.profile_image);
-        fbUserNameTextView =(TextView) header.findViewById(R.id.username);
+        userPicture = (CircleImageView) header.findViewById(R.id.profile_image);
+        fbUserNameTextView = (TextView) header.findViewById(R.id.username);
 
 
-
-        ViewPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager(),0);
+        ViewPagerAdapter = new MainActivityPagerAdapter(getSupportFragmentManager(), 0);
         MainActivityViewPager.setAdapter(ViewPagerAdapter);
 
         tabLayout.setupWithViewPager(MainActivityViewPager);
@@ -154,20 +162,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
     @OnClick(R.id.fab)
     public void onClick(View view) {
 
-        if(checkUserLoginStatus()){
-                Intent intent=new Intent(this,AddBookActivity.class);
-            intent.putExtra("userId",Profile.getCurrentProfile().getId());
-                startActivity(intent);
+        if (checkUserLoginStatus()) {
+            Intent intent = new Intent(this, AddBookActivity.class);
+            intent.putExtra("userId", Profile.getCurrentProfile().getId());
+            startActivity(intent);
 
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -213,29 +224,29 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(final String newText) {
-                RequestQueue requestQueue= Volley.newRequestQueue(context);
-                if(!newText.isEmpty()){
-               StringRequest jsonArrayRequest=new StringRequest(Request.Method.POST,queryUrl+newText,new Response.Listener<String>() {
+                RequestQueue requestQueue = Volley.newRequestQueue(context);
+                if (!newText.isEmpty()) {
+                    StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST, queryUrl + newText, new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
-                        suggestions.clear();
-                         JsonParser jsonParser=new JsonParser();
-                        try {
-                            JsonArray jsonArray = jsonParser.parse(response).getAsJsonArray();
-                            for (int i = 0; i < jsonArray.size(); i++) {
+                        @Override
+                        public void onResponse(String response) {
+                            suggestions.clear();
+                            JsonParser jsonParser = new JsonParser();
+                            try {
+                                JsonArray jsonArray = jsonParser.parse(response).getAsJsonArray();
+                                for (int i = 0; i < jsonArray.size(); i++) {
 
-                                JsonObject obj = jsonArray.get(i).getAsJsonObject();
-                                Book bookObject = new Book();
-                                bookObject.setTitle(obj.get("title").getAsString());
+                                    JsonObject obj = jsonArray.get(i).getAsJsonObject();
+                                    Book bookObject = new Book();
+                                    bookObject.setTitle(obj.get("title").getAsString());
 
-                                suggestions.add(bookObject);
+                                    suggestions.add(bookObject);
+                                }
+                            } catch (JsonSyntaxException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JsonSyntaxException e) {
-                            e.printStackTrace();
-                        }
 
-                        String[] columns = {
+                            String[] columns = {
                                     BaseColumns._ID,
                                     SearchManager.SUGGEST_COLUMN_TEXT_1,
                                     SearchManager.SUGGEST_COLUMN_INTENT_DATA
@@ -251,34 +262,35 @@ public class MainActivity extends AppCompatActivity {
                             suggestionAdapter.swapCursor(cursor);
                         }
 
-                }  , new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        VolleyLog.d("Volley=>", "Error: " + error.getMessage());
-                        // hide the progress dialog
-                        // hidepDialog();
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            VolleyLog.d("Volley=>", "Error: " + error.getMessage());
+                            // hide the progress dialog
+                            // hidepDialog();
 
-                    }
+                        }
 
-                }){
-                   @Override
-                   protected Map<String,String> getParams(){
-                       Map<String,String> params = new HashMap<String, String>();
-                       params.put("search",newText);
+                    }) {
+                        @Override
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("search", newText);
 
 
-                       return params;
-                   }
+                            return params;
+                        }
 
-                   @Override
-                   public Map<String, String> getHeaders() throws AuthFailureError {
-                       Map<String,String> params = new HashMap<String, String>();
-                       params.put("Content-Type","application/x-www-form-urlencoded");
-                       return params;
-                   }
-               };
-                requestQueue.add(jsonArrayRequest);}
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/x-www-form-urlencoded");
+                            return params;
+                        }
+                    };
+                    requestQueue.add(jsonArrayRequest);
+                }
                 return false;
             }
         });
@@ -290,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-       // int id = item.getItemId();
+        // int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
     /*    if (id == R.id.action_settings) {
@@ -300,19 +312,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setUserUI(){
-        if(AccessToken.getCurrentAccessToken()!=null){
-            Picasso.with(this).load("https://graph.facebook.com/"+Profile.getCurrentProfile().getId()+"/picture?type=large").into(userPicture);
+    private void setUserUI() {
+        if (AccessToken.getCurrentAccessToken() != null) {
+            Picasso.with(this).load("https://graph.facebook.com/" + Profile.getCurrentProfile().getId() + "/picture?type=large").into(userPicture);
             fbUserNameTextView.setText(Profile.getCurrentProfile().getName());
             navigationView.getMenu().getItem(6).setTitle(getString(R.string.logout));
         }
     }
-    private void clearUserUI(){
+
+    private void clearUserUI() {
         userPicture.setImageResource(android.R.color.transparent);
         fbUserNameTextView.setText("");
         navigationView.getMenu().getItem(6).setTitle(R.string.login);
     }
-    private void createDrawerButton(){
+
+    private void createDrawerButton() {
         /**
          * create drawer button
          */
@@ -345,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         /**end */
     }
 
-    private void setNavigationMenuItemListeners(){
+    private void setNavigationMenuItemListeners() {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 
             // This method will trigger on item Click of navigation menu
@@ -355,69 +369,75 @@ public class MainActivity extends AppCompatActivity {
 
                 //Checking if the item is in checked state or not, if not make it in checked state
 
-                    if (menuItem.isChecked()) menuItem.setChecked(false);
-                    else menuItem.setChecked(true);
+                if (menuItem.isChecked()) menuItem.setChecked(false);
+                else menuItem.setChecked(true);
 
                 //Closing drawer on item click
                 drawerLayout.closeDrawers();
-
+                int categoryId=0;
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
 
                     case R.id.literature:
-                        if(!menuItem.isChecked()){
-                            ViewPagerAdapter.setCategoryId(0);
-                        }else{
-                        ViewPagerAdapter.setCategoryId(1);}
-                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        if (!menuItem.isChecked()) {
+                            categoryId=0;
+                        } else {
+                            categoryId=1;
+                        }
+                        EventBus.getDefault().post(new ClearSavedInstanceEvent(true,categoryId));
                         return true;
                     case R.id.school_books:
-                        if(!menuItem.isChecked()){
-                            ViewPagerAdapter.setCategoryId(0);
-                        }else{
-                        ViewPagerAdapter.setCategoryId(2);}
-                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        if (!menuItem.isChecked()) {
+                            categoryId=0;
+                        } else {
+                            categoryId=2;
+                        }
+                        EventBus.getDefault().post(new ClearSavedInstanceEvent(true,categoryId));
                         return true;
                     case R.id.university_books:
-                        if(!menuItem.isChecked()){
-                            ViewPagerAdapter.setCategoryId(0);
-                        }else{
-                        ViewPagerAdapter.setCategoryId(3);}
-                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        if (!menuItem.isChecked()) {
+                            categoryId=0;
+                        } else {
+                            categoryId=3;
+                        }
+                        EventBus.getDefault().post(new ClearSavedInstanceEvent(true,categoryId));
                         return true;
                     case R.id.lexicon:
-                        if(!menuItem.isChecked()){
-                            ViewPagerAdapter.setCategoryId(0);
-                        }else{
-                        ViewPagerAdapter.setCategoryId(4);}
-                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        if (!menuItem.isChecked()) {
+                            categoryId=0;
+                        } else {
+                            categoryId=4;
+                        }
+                        EventBus.getDefault().post(new ClearSavedInstanceEvent(true,categoryId));
                         return true;
                     case R.id.study_notes:
-                        if(!menuItem.isChecked()){
-                            ViewPagerAdapter.setCategoryId(0);
-                        }else{
-                        ViewPagerAdapter.setCategoryId(5);}
-                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        if (!menuItem.isChecked()) {
+                            categoryId=0;
+                        } else {
+                            categoryId=5;
+                        }
+                        EventBus.getDefault().post(new ClearSavedInstanceEvent(true,categoryId));
                         return true;
                     case R.id.comics:
-                        if(!menuItem.isChecked()){
-                            ViewPagerAdapter.setCategoryId(0);
-                        }else{
-                        ViewPagerAdapter.setCategoryId(6);}
-                        MainActivityViewPager.setAdapter(ViewPagerAdapter);
+                        if (!menuItem.isChecked()) {
+                            categoryId=0;
+                        } else {
+                            categoryId=6;
+                        }
+                        EventBus.getDefault().post(new ClearSavedInstanceEvent(true,categoryId));
                         return true;
 
                     case R.id.login:
                         loginInFacebook();
                         return true;
                     case R.id.profile:
-                        if(checkUserLoginStatus()) {
+                        if (checkUserLoginStatus()) {
                             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
                             startActivity(intent);
                         }
                         return true;
                     case R.id.offers:
-                        if(checkUserLoginStatus()) {
+                        if (checkUserLoginStatus()) {
                             Intent intent = new Intent(MainActivity.this, OffersActivity.class);
                             startActivity(intent);
                         }
@@ -431,16 +451,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    boolean logged[]={false};
+    boolean logged[] = {false};
 
-    private boolean checkUserLoginStatus(){
+    private boolean checkUserLoginStatus() {
         if (AccessToken.getCurrentAccessToken() != null) {
            /* UploadStateFragment uploadStateFragment = new UploadStateFragment();
             uploadStateFragment.show(getFragmentManager(),"uploadFileStateFragment");*/
             logged[0] = true;
             return true;
-        }
-        else {
+        } else {
             new AlertDialog.Builder(context)
                     .setTitle("გსურთ გაიაროთ ავტორიზაცია ?")
                     .setMessage("განცხადების დასამატებლად და რედაქტირებისთვის საჭიროა ავტორიზაცია.")
@@ -461,10 +480,10 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void loginInFacebook(){
+    private void loginInFacebook() {
 
         accessToken = AccessToken.getCurrentAccessToken();
-        if (accessToken!=null) {
+        if (accessToken != null) {
             new AlertDialog.Builder(context)
                     .setTitle("")
                     .setMessage("გსურთ დატოვოთ პროფილი ?")
@@ -523,8 +542,8 @@ public class MainActivity extends AppCompatActivity {
                             parameters.putString("fields", "id,name,email,gender, birthday");
                             request.setParameters(parameters);
                             request.executeAsync();
-                             logged[0]=true;
-                             setUserUI();
+                            logged[0] = true;
+                            setUserUI();
 
                             Snackbar.make(fab, getString(R.string.login_success), Snackbar.LENGTH_LONG)
                                     .show();
@@ -542,11 +561,10 @@ public class MainActivity extends AppCompatActivity {
                         public void onError(FacebookException e) {
 
                             Log.e("dd", "facebook login failed error");
-                            if(e.getMessage().equals(getString(R.string.facebook_connection_error))) {
+                            if (e.getMessage().equals(getString(R.string.facebook_connection_error))) {
                                 Snackbar.make(fab, getString(R.string.fb_connectiion_error_snackbar_msg), Snackbar.LENGTH_LONG)
                                         .show();
-                            }
-                            else {
+                            } else {
                                 Snackbar.make(fab, getString(R.string.fb_error_snackbar_msg), Snackbar.LENGTH_LONG)
                                         .show();
                             }
@@ -556,12 +574,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int responseCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int responseCode, Intent data) {
         super.onActivityResult(requestCode, responseCode, data);
         callbackManager.onActivityResult(requestCode, responseCode, data);
 
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -588,6 +606,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).show();
     }
+
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from

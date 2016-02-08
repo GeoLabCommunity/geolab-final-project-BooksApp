@@ -7,6 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.View;
 import android.widget.ExpandableListView;
 
@@ -31,26 +33,36 @@ import butterknife.ButterKnife;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.models.GroupItem;
+import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.views.adapters.ExpandableListAdapter;
 import ge.geolab.bookswap.views.customViews.AnimatedExpandableListView;
+import icepick.Icepick;
+import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class OffersActivity extends AppCompatActivity {
     @Bind(R.id.expandable_list) AnimatedExpandableListView listView;
     @BindString(R.string.get_my_offers_url) String offersUrl;
     private ExpandableListAdapter adapter;
-    private List<GroupItem> headerItemsList = new ArrayList<GroupItem>();
+    @State
+    ArrayList<GroupItem> headerItemsList = new ArrayList<GroupItem>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
         setContentView(R.layout.activity_offers);
         ButterKnife.bind(this);
+        SpannableString title= new SpannableString(getResources().getString(R.string.title_activity_offers));
+        title.setSpan(new TypeFaceSpan(this, "bpg_nino_mtavruli_bold.ttf"), 0, title.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        setTitle(title);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         adapter=new ExpandableListAdapter(this);
         adapter.setData(headerItemsList);
         listView.setAdapter(adapter);
+        if(savedInstanceState==null)
         drawList(offersUrl,headerItemsList,adapter);
         listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
@@ -71,10 +83,13 @@ public class OffersActivity extends AppCompatActivity {
 
         });
         setChildClickListeners();
-
     }
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+    @Override public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
     }
      private void drawList(String url, final List<GroupItem> headerItemsList, final ExpandableListAdapter adapter){
 

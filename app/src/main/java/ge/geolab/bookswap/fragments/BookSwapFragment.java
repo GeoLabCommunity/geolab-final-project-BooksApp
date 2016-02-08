@@ -35,12 +35,17 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.activities.DetailsActivity;
+import ge.geolab.bookswap.events.ClearSavedInstanceEvent;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.views.adapters.BookAdListAdapter;
 import ge.geolab.bookswap.views.customListeners.ItemClickSupport;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
+import icepick.Icepick;
+import icepick.State;
+import icepick.processor.IcepickProcessor;
 
 /**
  * Created by dalkh on 25-Dec-15.
@@ -75,32 +80,39 @@ public class BookSwapFragment extends Fragment {
     SwipeRefreshLayout refreshLayout;
     @BindString(R.string.list_array_url)
     String jsonArrayUrl;
-    private ArrayList<Book> bookAdList;
+    @State
+    ArrayList<Book> bookAdList = new ArrayList<>();
     private RequestQueue requestQueue;
     private BookAdListAdapter adapter;
-    private String lastItemIdInJson = "0";
+    @State
+    String lastItemIdInJson = "0";
     Snackbar pagingSnackbar;
     Snackbar errorSnackbar;
+    int adTypeIndex=1;
+    @State int categoryId=0;
+    EndlessRecyclerViewScrollListener scrollListener;
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Icepick.restoreInstanceState(this, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_swap, container, false);
         ButterKnife.bind(this, rootView);
-
-        final int adTypeIndex = getArguments().getInt(ARG_SECTION_NUMBER);
-        final int categoryId = getArguments().getInt(CATEGORY_ID);
+        adTypeIndex = getArguments().getInt(ARG_SECTION_NUMBER);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
         final StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(columns, 1);
         final Context context = getActivity().getApplicationContext();
         requestQueue = Volley.newRequestQueue(context);
 
         bookAdListView.setLayoutManager(gridLayoutManager);
-        bookAdList = new ArrayList<>();
         adapter = new BookAdListAdapter(context, bookAdList);
         bookAdListView.setAdapter(adapter);
-
-        final EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
 
@@ -118,13 +130,8 @@ public class BookSwapFragment extends Fragment {
             }
         };
         bookAdListView.addOnScrollListener(scrollListener);
-        if (categoryId == 0) {
+        if (categoryId == 0 && savedInstanceState == null) {
             fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
-        }
-        if (categoryId != 0) {
-            lastItemIdInJson = "0";
-            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
-            //jsonArrayUrl=jsonArrayUrl+"/category_id/"+categoryId+"/type/"+adTypeIndex;
         }
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
@@ -152,8 +159,24 @@ public class BookSwapFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         pagingSnackbar = Snackbar.make(bookAdListView, "მონაცემები იტვირთება", Snackbar.LENGTH_INDEFINITE);
-        errorSnackbar=Snackbar.make(bookAdListView,
+        errorSnackbar = Snackbar.make(bookAdListView,
                 "საჭიროა ინტერნეტთან კავშირი", Snackbar.LENGTH_LONG);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
+    public void onEvent(ClearSavedInstanceEvent event) {
+        if (event.isCategorySelected) {
+            lastItemIdInJson = "0";
+            bookAdList.clear();
+            categoryId=event.categoryId;
+            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+            scrollListener.reset();
+        }
     }
 
     private String parseUrl(String url, String lastId, int categoryId, int typeId) {
@@ -190,7 +213,7 @@ public class BookSwapFragment extends Fragment {
                                final BookAdListAdapter adapter,
                                final SwipeRefreshLayout refreshLayout) {
 
-          refreshLayout.setRefreshing(true);
+        refreshLayout.setRefreshing(true);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
 
             @Override
@@ -278,16 +301,22 @@ public class BookSwapFragment extends Fragment {
     public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
         // The minimum amount of items to have below your current scroll position
         // before loading more.
-        private int visibleThreshold = 1;
+        int visibleThreshold = 1;
         // The current offset index of data you have loaded
-        private int currentPage = 0;
+
+        int currentPage = 0;
         // The total number of items in the dataset after the last load
-        private int previousTotalItemCount = 0;
+
+        int previousTotalItemCount = 0;
         // True if we are still waiting for the last set of data to load.
-        private boolean loading = true;
+
+        boolean loading = true;
         // Sets the starting page index
-        private int startingPageIndex = 0;
+
+        int startingPageIndex = 0;
         StaggeredGridLayoutManager mStaggeredGridLayoutManager;
+        int totalItemCount;
+        int lastVisibleItemPosition;
 
         public EndlessRecyclerViewScrollListener(StaggeredGridLayoutManager layoutManager) {
             this.mStaggeredGridLayoutManager = layoutManager;
@@ -312,9 +341,9 @@ public class BookSwapFragment extends Fragment {
         @Override
         public void onScrolled(RecyclerView view, int dx, int dy) {
             int[] lastVisibleItemPositions = mStaggeredGridLayoutManager.findLastVisibleItemPositions(null);
-            int lastVisibleItemPosition = getLastVisibleItem(lastVisibleItemPositions);
+            lastVisibleItemPosition = getLastVisibleItem(lastVisibleItemPositions);
             int visibleItemCount = view.getChildCount();
-            int totalItemCount = mStaggeredGridLayoutManager.getItemCount();
+            totalItemCount = mStaggeredGridLayoutManager.getItemCount();
 
             // If the total item count is zero and the previous isn't, assume the
             // list is invalidated and should be reset back to initial state
@@ -353,4 +382,11 @@ public class BookSwapFragment extends Fragment {
 
         public abstract void onLoadMore(int page, int totalItemsCount);
     }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
 }

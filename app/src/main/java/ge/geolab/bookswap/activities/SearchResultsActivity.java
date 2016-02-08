@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -45,30 +46,35 @@ import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.views.adapters.BookAdListAdapter;
 import ge.geolab.bookswap.views.customListeners.ItemClickSupport;
+import icepick.Icepick;
+import icepick.State;
 
 public class SearchResultsActivity extends AppCompatActivity {
     @Bind(R.id.list_of_query)
     RecyclerView queryListView;
-    @BindString(R.string.search_query_url) String queryUrl;
+    @BindString(R.string.search_query_url)
+    String queryUrl;
     private BookAdListAdapter adapter;
-    private ArrayList<Book> bookAdList;
+    @State
+    ArrayList<Book> bookAdList = new ArrayList<>();
     private RequestQueue requestQueue;
     private Context context;
     private Snackbar loadingSnackbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
         setContentView(R.layout.activity_search_results);
         ButterKnife.bind(this);
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        context=this;
+        context = this;
         final int columns = getResources().getInteger(R.integer.gallery_columns);
         final StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(columns, 1);
         queryListView.setLayoutManager(gridLayoutManager);
-        bookAdList = new ArrayList<>();
         adapter = new BookAdListAdapter(this, bookAdList);
         queryListView.setAdapter(adapter);
 
@@ -84,113 +90,122 @@ public class SearchResultsActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
 
         handleIntent(intent);
     }
+
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
 
-            getQueryData(query,requestQueue,queryUrl,bookAdList,adapter);
+            getQueryData(query, requestQueue, queryUrl, bookAdList, adapter);
         }
     }
 
     private void getQueryData(final String newText, RequestQueue requestQueue, String url,
                               final ArrayList<Book> list,
                               final BookAdListAdapter adapter) {
-        requestQueue= Volley.newRequestQueue(this);
-        if(!newText.isEmpty()){
-            loadingSnackbar=Snackbar.make(queryListView,getResources().getString(R.string.data_is_loading),Snackbar.LENGTH_INDEFINITE);
+        requestQueue = Volley.newRequestQueue(this);
+        if (!newText.isEmpty()) {
+            loadingSnackbar = Snackbar.make(queryListView, getResources().getString(R.string.data_is_loading), Snackbar.LENGTH_INDEFINITE);
             loadingSnackbar.show();
-        StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST, queryUrl + newText, new Response.Listener<String>() {
+            StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST, queryUrl + newText, new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(String response) {
-                list.clear();
-                JsonParser jsonParser = new JsonParser();
-                try {
-                    JsonArray jsonArray = jsonParser.parse(response).getAsJsonArray();
-                    for (int i = 0; i < jsonArray.size(); i++) {
+                @Override
+                public void onResponse(String response) {
+                    list.clear();
+                    JsonParser jsonParser = new JsonParser();
+                    try {
+                        JsonArray jsonArray = jsonParser.parse(response).getAsJsonArray();
+                        for (int i = 0; i < jsonArray.size(); i++) {
 
-                        JsonObject obj = jsonArray.get(i).getAsJsonObject();
-                        Book bookObject = new Book();
-                        bookObject.setCategory(obj.get("category_id").getAsString());
-                        bookObject.setAdType(obj.get("type").getAsString());
-                        bookObject.setCondition(obj.get("state").getAsString());
-                        bookObject.setAuthor(obj.get("author").getAsString());
-                        bookObject.setTitle(obj.get("title").getAsString());
-                        bookObject.setLocation(obj.get("location").getAsString());
-                        bookObject.setExchangeItem(obj.get("item").getAsString());
-                        bookObject.setDescription(obj.get("description").getAsString());
-                        bookObject.seteMail(obj.get("email").getAsString());
-                        bookObject.setMobileNum(obj.get("mobile").getAsString());
-                        JsonArray imgArrayJSON = obj.get("img").getAsJsonArray();
-                        ArrayList<String> imgArray = new ArrayList<>();
-                        for (int k = 0; k < imgArrayJSON.size(); k++) {
+                            JsonObject obj = jsonArray.get(i).getAsJsonObject();
+                            Book bookObject = new Book();
+                            bookObject.setCategory(obj.get("category_id").getAsString());
+                            bookObject.setAdType(obj.get("type").getAsString());
+                            bookObject.setCondition(obj.get("state").getAsString());
+                            bookObject.setAuthor(obj.get("author").getAsString());
+                            bookObject.setTitle(obj.get("title").getAsString());
+                            bookObject.setLocation(obj.get("location").getAsString());
+                            bookObject.setExchangeItem(obj.get("item").getAsString());
+                            bookObject.setDescription(obj.get("description").getAsString());
+                            bookObject.seteMail(obj.get("email").getAsString());
+                            bookObject.setMobileNum(obj.get("mobile").getAsString());
+                            JsonArray imgArrayJSON = obj.get("img").getAsJsonArray();
+                            ArrayList<String> imgArray = new ArrayList<>();
+                            for (int k = 0; k < imgArrayJSON.size(); k++) {
 
 
-                            if (imgArrayJSON.get(k).isJsonNull()) {
-                                imgArray.add("null");
-                            } else {
-                                imgArray.add(imgArrayJSON.get(k).getAsString());
-                                if(k==0){
-                                    bookObject.setFrontImageUrl(imgArrayJSON.get(k).getAsString());
+                                if (imgArrayJSON.get(k).isJsonNull()) {
+                                    imgArray.add("null");
+                                } else {
+                                    imgArray.add(imgArrayJSON.get(k).getAsString());
+                                    if (k == 0) {
+                                        bookObject.setFrontImageUrl(imgArrayJSON.get(k).getAsString());
+                                    }
+
                                 }
 
+
                             }
+                            bookObject.setPictures(imgArray);
+                            bookObject.setId(obj.get("user_id").getAsString());
 
-
+                            list.add(bookObject);
                         }
-                        bookObject.setPictures(imgArray);
-                        bookObject.setId(obj.get("user_id").getAsString());
-
-                        list.add(bookObject);
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
                     }
-                } catch (JsonSyntaxException e) {
-                    e.printStackTrace();
+
+                    loadingSnackbar.dismiss();
+                    adapter.notifyDataSetChanged();
                 }
 
-                loadingSnackbar.dismiss();
-                adapter.notifyDataSetChanged();
-            }
+            }, new Response.ErrorListener() {
 
-        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.d("Volley=>", "Error: " + error.getMessage());
+                    loadingSnackbar.setDuration(Snackbar.LENGTH_LONG);
+                    loadingSnackbar.setText(getResources().getString(R.string.fb_error_snackbar_msg));
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("Volley=>", "Error: " + error.getMessage());
-                loadingSnackbar.setDuration(Snackbar.LENGTH_LONG);
-                loadingSnackbar.setText(getResources().getString(R.string.fb_error_snackbar_msg));
+                    // hide the progress dialog
+                    // hidepDialog();
 
-                // hide the progress dialog
-                // hidepDialog();
+                }
 
-            }
-
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("search", newText);
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("search", newText);
 
 
-                return params;
-            }
+                    return params;
+                }
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/x-www-form-urlencoded");
-                return params;
-            }
-        };
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/x-www-form-urlencoded");
+                    return params;
+                }
+            };
             requestQueue.add(jsonArrayRequest);
+        }
     }
-    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -236,14 +251,14 @@ public class SearchResultsActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(final String newText) {
-                RequestQueue requestQueue= Volley.newRequestQueue(context);
-                if(!newText.isEmpty()){
-                    StringRequest jsonArrayRequest=new StringRequest(Request.Method.POST,queryUrl+newText,new Response.Listener<String>() {
+                RequestQueue requestQueue = Volley.newRequestQueue(context);
+                if (!newText.isEmpty()) {
+                    StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST, queryUrl + newText, new Response.Listener<String>() {
 
                         @Override
                         public void onResponse(String response) {
                             suggestions.clear();
-                            JsonParser jsonParser=new JsonParser();
+                            JsonParser jsonParser = new JsonParser();
                             try {
                                 JsonArray jsonArray = jsonParser.parse(response).getAsJsonArray();
                                 for (int i = 0; i < jsonArray.size(); i++) {
@@ -274,7 +289,7 @@ public class SearchResultsActivity extends AppCompatActivity {
                             suggestionAdapter.swapCursor(cursor);
                         }
 
-                    }  , new Response.ErrorListener() {
+                    }, new Response.ErrorListener() {
 
                         @Override
                         public void onErrorResponse(VolleyError error) {
@@ -284,11 +299,11 @@ public class SearchResultsActivity extends AppCompatActivity {
 
                         }
 
-                    }){
+                    }) {
                         @Override
-                        protected Map<String,String> getParams(){
-                            Map<String,String> params = new HashMap<String, String>();
-                            params.put("search",newText);
+                        protected Map<String, String> getParams() {
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("search", newText);
 
 
                             return params;
@@ -296,12 +311,13 @@ public class SearchResultsActivity extends AppCompatActivity {
 
                         @Override
                         public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String,String> params = new HashMap<String, String>();
-                            params.put("Content-Type","application/x-www-form-urlencoded");
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/x-www-form-urlencoded");
                             return params;
                         }
                     };
-                    requestQueue.add(jsonArrayRequest);}
+                    requestQueue.add(jsonArrayRequest);
+                }
                 return false;
             }
         });

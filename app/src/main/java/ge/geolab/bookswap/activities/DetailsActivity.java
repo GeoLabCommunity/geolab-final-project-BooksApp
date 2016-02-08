@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +40,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
 import com.facebook.Profile;
+import com.google.common.eventbus.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -63,6 +65,8 @@ import ge.geolab.bookswap.utils.CategoryArrays;
 import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.views.customViews.ExpandableTextView;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
+import icepick.Icepick;
+import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class DetailsActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener{
@@ -90,6 +94,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     @BindString(R.string.check_book_offer_status_url) String checkOfferUrl;
     private Book book;
     private String TAG="Offer check request";
+    private ArrayList<Book> suggestionList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,13 +116,15 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         Animation scale_up = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.scale_up);
         descriptionView.setInAnimation(scale_up);
-       book= (Book) getIntent().getSerializableExtra("book");
-           imageSlider.setCustomIndicator(pagerIndicator);
+        book= (Book) getIntent().getSerializableExtra("book");
+        imageSlider.setCustomIndicator(pagerIndicator);
         setData(book);
+
+        //hide indicators and stop sliding when there is 1 image
         if(book.getPictures().size()==1){
             imageSlider.stopAutoCycle();
             pagerIndicator.setVisibility(View.GONE);
-            //stop sliding when there is one image
+            //stop touch sliding when there is one image
             imageSlider.setPagerTransformer(false, new BaseTransformer() {
                 @Override
                 protected void onTransform(View view, float position) {
@@ -126,6 +133,8 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
             });
 
         }
+
+        //hide image layout when no image is found
         if(book.getPictures().get(0).equals("null")){
             imageSlider.stopAutoCycle();
             pagerIndicator.setVisibility(View.GONE);
@@ -133,11 +142,13 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         suggestionsSlider.stopAutoCycle();
-        getSuggestionsData(jsonUrl,book.getId());
+        getSuggestionsData(jsonUrl,book.getId(),suggestionList);
         if(AccessToken.getCurrentAccessToken()!=null)
         checkOfferStatus(checkOfferUrl,Profile.getCurrentProfile().getId(),book.getServer_id(),book.getAdType());
 
     }
+
+
     @OnClick(R.id.description_container)
     public void onClick(View view){
 
@@ -223,13 +234,12 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         ).executeAsync();
 
     }
-    private void getSuggestionsData(String url, String id){
+    private void getSuggestionsData(String url, String id, final ArrayList<Book> list){
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url+"/0/user_id/"+id, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray jsonArray) {
-                ArrayList<Book> list=new ArrayList<>();
                 if(jsonArray.length()>1) {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -357,12 +367,14 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         myBookListDialog.show(getSupportFragmentManager(),"bookOffers");
     }
 
+    @Subscribe
     public void onEvent(HideOfferButtonEvent event){
         if(event.isMessageSent){
             offerButton.setVisibility(View.GONE);
         }
     }
 
+     // Checks if offer is already sent for this book
     private void checkOfferStatus(String url, final String myId, final String bookId, final String adType){
         RequestQueue requestQueue= Volley.newRequestQueue(this);
         StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST,

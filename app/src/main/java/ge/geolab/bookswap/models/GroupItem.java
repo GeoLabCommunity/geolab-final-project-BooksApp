@@ -1,12 +1,13 @@
 package ge.geolab.bookswap.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dalkh on 31-Jan-16.
  */
-public class GroupItem {
+public class GroupItem implements Serializable{
     String title;
     List<Book> items = new ArrayList<Book>();
     String categoryId;

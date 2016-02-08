@@ -73,6 +73,6 @@
     <string name="connection_is_needed">საჭიროა ინტერნერთან კავშირი</string>
     <string name="offer_book">შეთავაზე წიგნი</string>
     <string name="blank">…</string>
-    <string name="title_activity_offers">OffersActivity</string>
+    <string name="title_activity_offers">შემოთავაზებები</string>
     <string name="offer_dialog_no_book_found">ამ ფუნქციის გამოსაყენებლად საჭიროა დაამატოთ წიგნი</string>
 </resources>

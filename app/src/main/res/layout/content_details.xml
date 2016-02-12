@@ -249,6 +249,7 @@
             android:layout_gravity="center_horizontal"
             style="@style/username_text"/>
             <TextView
+                android:id="@+id/suggestions_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/details_view_margin_top"

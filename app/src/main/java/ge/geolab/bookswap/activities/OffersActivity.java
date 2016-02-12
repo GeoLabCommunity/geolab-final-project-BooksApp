@@ -43,6 +43,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class OffersActivity extends AppCompatActivity {
     @Bind(R.id.expandable_list) AnimatedExpandableListView listView;
     @BindString(R.string.get_my_offers_url) String offersUrl;
+    @BindString(R.string.fb_error_snackbar_msg) String connectionErrorMessage;
     private ExpandableListAdapter adapter;
     @State
     ArrayList<GroupItem> headerItemsList = new ArrayList<GroupItem>();
@@ -164,9 +165,13 @@ public class OffersActivity extends AppCompatActivity {
                      @Override
                      public void onErrorResponse(VolleyError error) {
                          VolleyLog.d("Volley=>", "Error: " + error.getMessage());
-                        // refreshLayout.setRefreshing(false);
-                         // hide the progress dialog
-                         // hidepDialog();
+                         //Retry sending request
+                         displaySnackbar(connectionErrorMessage, "RETRY", new View.OnClickListener() {
+                             @Override
+                             public void onClick(View v) {
+                                 drawList(offersUrl,headerItemsList,adapter);
+                             }
+                         });
 
                      }
                  });
@@ -184,5 +189,11 @@ public class OffersActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+    private void displaySnackbar(String text, String actionName, View.OnClickListener action) {
+        Snackbar snack = Snackbar.make(listView, text, Snackbar.LENGTH_INDEFINITE)
+                .setAction(actionName, action);
+
+        snack.show();
     }
 }

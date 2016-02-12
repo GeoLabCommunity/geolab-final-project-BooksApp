@@ -87,7 +87,7 @@ android:background="@color/background"
         >
         <TextView
             android:id="@+id/book_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
             fontPath="fonts/bpg_nino_mtavruli_bold.ttf"

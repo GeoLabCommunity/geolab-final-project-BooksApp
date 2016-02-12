@@ -4,7 +4,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="facebook_app_id">984640668262403</string>
     <string name="gcm_defaultSenderId">577999243620</string>
-    <string name="FILE_UPLOAD_URL">http://192.168.1.100/geolabclass/welcome/upload</string>
+    <string name="FILE_UPLOAD_URL">http://geolab.club/streetart/index.php/welcome/upload</string>
     <string name="login">ავტორიზაცია</string>
     <string name="logout">გამოსვლა</string>
     <string name="profile">პირადი კაბინეტი</string>
@@ -15,7 +15,7 @@
     <string name="drawer_close">მენიუ დახურულია</string>
     <string name="facebook_connection_error">CONNECTION_FAILURE: CONNECTION_FAILURE</string>
     <string name="fb_connectiion_error_snackbar_msg">საჭიროა კავშირი ინტერნეტთან</string>
-    <string name="fb_error_snackbar_msg">დაფიქსირდა შეცდომა</string>
+    <string name="fb_error_snackbar_msg">Connection Error</string>
     <string name="title_activity_add_book">განცხადების დამატება</string>
     <string name="add_picture">სურათის დამატება</string>
     <string name="gallery">გალერეა</string>
@@ -33,8 +33,8 @@
     <string name="validate.title">საჭიროა წიგნის დასახელება</string>
     <string name="validate.exchange_item">საჭიროა გასაცვლელი წიგნის დასახელება</string>
     <string name="validate.pictures">საჭიროა ერთი სურათი მაინც</string>
-    <string name="list_array_url">http://192.168.1.100/geolabclass/welcome/select/0/</string>
-    <string name="picture_url">http://192.168.1.100/geolabclass/uploads/</string>
+    <string name="list_array_url">http://geolab.club/streetart/index.php/welcome/select/0/</string>
+    <string name="picture_url">http://geolab.club/streetart/uploads/</string>
     <string name="details_of_book">წიგნის დეტალური დახასიათება</string>
     <string name="description_not_found">აღწერა ვერ მოიძებნა</string>
     <string name="other_books">სხვა განცხადებები</string>
@@ -63,16 +63,17 @@
     <string name="search_title">ძებნა</string>
     <string name="search_hint">ჩაწერეთ წიგნის სახელი</string>
     <string name="title_activity_search_results">ძებნა</string>
-    <string name="remove_entry_url">http://192.168.1.100/geolabclass/welcome/delete/list/id/</string>
-    <string name="search_query_url">http://192.168.1.100/geolabclass/welcome/search/</string>
-    <string name="register_messaging_url">http://192.168.1.100/geolabclass/welcome/register_token/</string>
-    <string name="book_change_POST_url">http://192.168.1.100/geolabclass/welcome/send_token/</string>
-    <string name="check_book_offer_status_url">http://192.168.1.100/geolabclass/welcome/check_exchange/</string>
-    <string name="get_my_offers_url">http://192.168.1.100/geolabclass/welcome/exchange_list/</string>
+    <string name="remove_entry_url">http://geolab.club/streetart/index.php/welcome/delete/list/id/</string>
+    <string name="search_query_url">http://geolab.club/streetart/index.php/welcome/search/</string>
+    <string name="register_messaging_url">http://geolab.club/streetart/index.php/welcome/register_token/</string>
+    <string name="book_change_POST_url">http://geolab.club/streetart/index.php/welcome/send_token/</string>
+    <string name="check_book_offer_status_url">http://geolab.club/streetart/index.php/welcome/check_exchange/</string>
+    <string name="get_my_offers_url">http://geolab.club/streetart/index.php/welcome/exchange_list/</string>
     <string name="data_is_loading">მონაცემები იტვირთება</string>
     <string name="connection_is_needed">საჭიროა ინტერნერთან კავშირი</string>
     <string name="offer_book">შეთავაზე წიგნი</string>
     <string name="blank">…</string>
     <string name="title_activity_offers">შემოთავაზებები</string>
     <string name="offer_dialog_no_book_found">ამ ფუნქციის გამოსაყენებლად საჭიროა დაამატოთ წიგნი</string>
+    <string name="offer_is_sent">შეთავაზება გაგზავნილია</string>
 </resources>

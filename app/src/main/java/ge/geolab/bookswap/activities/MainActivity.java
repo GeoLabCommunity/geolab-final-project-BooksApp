@@ -50,6 +50,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.Profile;
+import com.facebook.ProfileTracker;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -82,6 +83,7 @@ import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.network.CustomJsonRequest;
 import ge.geolab.bookswap.network.cloudMessaging.RegistrationIntentService;
 import ge.geolab.bookswap.views.adapters.MainActivityPagerAdapter;
+import ge.geolab.bookswap.views.adapters.ProfileListAdapter;
 import ge.geolab.bookswap.views.customViews.CustomTabLayout;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -108,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     CallbackManager callbackManager;
     AccessToken accessToken;
     AccessTokenTracker accessTokenTracker;
+    ProfileTracker profileTracker;
     Context context = this;
     private int categoryId;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -121,12 +124,25 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         //set transition animation
         overridePendingTransition(R.anim.slide_down, R.anim.slide_out_right);
-      /* SpannableString exchange= new SpannableString("ვცვლი");
-        exchange.setSpan(new TypeFaceSpan(this.context, "bpg_nino_mtavruli_bold.ttf"), 0, exchange.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        SpannableString finding=new SpannableString("ვეძებ");
-        finding.setSpan(new TypeFaceSpan(this.context, "bpg_nino_mtavruli_bold.ttf"), 0, finding.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);*/
+
+      profileTracker = new ProfileTracker() {
+
+            @Override
+            protected void onCurrentProfileChanged(Profile profile, Profile profile1) {
+
+
+                //Listen for changes to the profile or for a new profile: update your
+                //user data, and launch the main activity afterwards. If my user has just logged in,
+                //I make sure to update his information before launching the main Activity.
+
+                Log.i("FB Profile Changed", profile1.getId());
+                Profile.setCurrentProfile(profile1);
+                setUserUI();
+
+            }
+        };
+        profileTracker.startTracking();
+
         accessTokenTracker = new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(
@@ -134,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     AccessToken currentAccessToken) {
                 // Set the access token using
                 // currentAccessToken when it's loaded or set.
-                accessToken = currentAccessToken;
+                AccessToken.setCurrentAccessToken(currentAccessToken);
             }
         };
         accessToken = AccessToken.getCurrentAccessToken();
@@ -153,9 +169,9 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.setupWithViewPager(MainActivityViewPager);
         setNavigationMenuItemListeners();
-        setUserUI();
 
-        if (checkPlayServices()) {
+
+        if (checkPlayServices() && Profile.getCurrentProfile()!=null) {
             // Start IntentService to register this application with GCM.
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
@@ -313,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUserUI() {
-        if (AccessToken.getCurrentAccessToken() != null) {
+        if (AccessToken.getCurrentAccessToken() != null && Profile.getCurrentProfile()!=null) {
             Picasso.with(this).load("https://graph.facebook.com/" + Profile.getCurrentProfile().getId() + "/picture?type=large").into(userPicture);
             fbUserNameTextView.setText(Profile.getCurrentProfile().getName());
             navigationView.getMenu().getItem(6).setTitle(getString(R.string.logout));
@@ -515,6 +531,7 @@ public class MainActivity extends AppCompatActivity {
                     permissionNeeds);
             LoginManager.getInstance().registerCallback(callbackManager,
                     new FacebookCallback<LoginResult>() {
+
                         @Override
                         public void onSuccess(LoginResult loginResult) {
 
@@ -584,6 +601,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         accessTokenTracker.stopTracking();
+        profileTracker.startTracking();
     }
 
     @Override

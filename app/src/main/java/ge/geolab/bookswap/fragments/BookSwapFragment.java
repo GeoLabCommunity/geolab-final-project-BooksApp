@@ -40,6 +40,7 @@ import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.activities.DetailsActivity;
 import ge.geolab.bookswap.events.ClearSavedInstanceEvent;
 import ge.geolab.bookswap.models.Book;
+import ge.geolab.bookswap.utils.ConnectionDetector;
 import ge.geolab.bookswap.views.adapters.BookAdListAdapter;
 import ge.geolab.bookswap.views.customListeners.ItemClickSupport;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
@@ -80,17 +81,24 @@ public class BookSwapFragment extends Fragment {
     SwipeRefreshLayout refreshLayout;
     @BindString(R.string.list_array_url)
     String jsonArrayUrl;
+    @BindString(R.string.data_is_loading)
+    String dataIsLoadingMessage;
+    @BindString(R.string.fb_error_snackbar_msg)
+    String connectionErrorMessage;
     @State
     ArrayList<Book> bookAdList = new ArrayList<>();
     private RequestQueue requestQueue;
     private BookAdListAdapter adapter;
     @State
     String lastItemIdInJson = "0";
+    Context context;
     Snackbar pagingSnackbar;
     Snackbar errorSnackbar;
-    int adTypeIndex=1;
-    @State int categoryId=0;
+    int adTypeIndex = 1;
+    @State
+    int categoryId = 0;
     EndlessRecyclerViewScrollListener scrollListener;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -103,10 +111,10 @@ public class BookSwapFragment extends Fragment {
         Icepick.restoreInstanceState(this, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_swap, container, false);
         ButterKnife.bind(this, rootView);
+        context = getActivity().getApplicationContext();
         adTypeIndex = getArguments().getInt(ARG_SECTION_NUMBER);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
         final StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(columns, 1);
-        final Context context = getActivity().getApplicationContext();
         requestQueue = Volley.newRequestQueue(context);
 
         bookAdListView.setLayoutManager(gridLayoutManager);
@@ -121,7 +129,6 @@ public class BookSwapFragment extends Fragment {
                 pagingSnackbar.setActionTextColor(Color.RED).setAction("Cancel", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         requestQueue.cancelAll("REQUEST");
                         refreshLayout.setRefreshing(false);
                     }
@@ -131,7 +138,7 @@ public class BookSwapFragment extends Fragment {
         };
         bookAdListView.addOnScrollListener(scrollListener);
         if (categoryId == 0 && savedInstanceState == null) {
-            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+            cacheJson();
         }
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             public void onRefresh() {
@@ -158,9 +165,9 @@ public class BookSwapFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        pagingSnackbar = Snackbar.make(bookAdListView, "მონაცემები იტვირთება", Snackbar.LENGTH_INDEFINITE);
-        errorSnackbar = Snackbar.make(bookAdListView,
-                "საჭიროა ინტერნეტთან კავშირი", Snackbar.LENGTH_LONG);
+        pagingSnackbar = Snackbar.make(bookAdListView, dataIsLoadingMessage, Snackbar.LENGTH_INDEFINITE);
+
+
     }
 
     @Override
@@ -173,8 +180,8 @@ public class BookSwapFragment extends Fragment {
         if (event.isCategorySelected) {
             lastItemIdInJson = "0";
             bookAdList.clear();
-            categoryId=event.categoryId;
-            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+            categoryId = event.categoryId;
+            cacheJson();
             scrollListener.reset();
         }
     }
@@ -185,10 +192,12 @@ public class BookSwapFragment extends Fragment {
     }
 
     private void cacheJson() {
-        Cache cache = requestQueue.getCache();
-        Cache.Entry entry = cache.get(jsonArrayUrl);
 
-        if (entry != null) {
+        String url = parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex);
+        Cache cache = requestQueue.getCache();
+        Cache.Entry entry = cache.get(url);
+
+        if (entry != null && !ConnectionDetector.isConnectingToInternet(context)) {
             try {
                 String data = new String(entry.data, "UTF-8");
                 Log.d("CACHE DATA", data);
@@ -203,12 +212,11 @@ public class BookSwapFragment extends Fragment {
                 e.printStackTrace();
             }
         } else {
-            refreshLayout.setRefreshing(true);
-            fetchJsonData(requestQueue, jsonArrayUrl, bookAdList, adapter, refreshLayout);
+            fetchJsonData(requestQueue, url, bookAdList, adapter, refreshLayout);
         }
     }
 
-    private void fetchJsonData(RequestQueue requestQueue, String url,
+    private void fetchJsonData(final RequestQueue requestQueue, String url,
                                final ArrayList<Book> list,
                                final BookAdListAdapter adapter,
                                final SwipeRefreshLayout refreshLayout) {
@@ -229,17 +237,33 @@ public class BookSwapFragment extends Fragment {
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("Volley=>", "Error: " + error.getMessage());
                         refreshLayout.setRefreshing(false);
+                        pagingSnackbar.dismiss();
+                        /*errorSnackbar.setAction("Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+                            }
+                        });
                         errorSnackbar.show();
-
-                        // hide the progress dialog
-                        // hidepDialog();
-
+*/
+                        displaySnackbar(connectionErrorMessage, "retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+                            }
+                        });
                     }
                 });
         jsonArrayRequest.setTag("REQUEST");
         requestQueue.add(jsonArrayRequest);
 
 
+    }
+    private void displaySnackbar(String text, String actionName, View.OnClickListener action) {
+        Snackbar snack = Snackbar.make(bookAdListView, text, Snackbar.LENGTH_INDEFINITE)
+                .setAction(actionName, action);
+
+        snack.show();
     }
 
     private void setData(JSONArray jsonArray,

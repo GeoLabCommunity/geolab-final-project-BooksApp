@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -65,36 +64,62 @@ import ge.geolab.bookswap.utils.CategoryArrays;
 import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.views.customViews.ExpandableTextView;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
-import icepick.Icepick;
-import icepick.State;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class DetailsActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener{
-    @Bind(R.id.slider) SliderLayout imageSlider;
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.title) TextView titleView;
-    @Bind(R.id.author) TextView authorView;
-    @Bind(R.id.category) TextView categoryView;
-    @Bind(R.id.condition) TextView conditionView;
-    @Bind(R.id.location) TextView locationView;
-    @Bind(R.id.exchange_item) TextView exchangeItemView;
-    @Bind(R.id.email) TextView emailView;
-    @Bind(R.id.mobile_number) TextView mobileNumView;
-    @Bind(R.id.user_image) CircleImageView profilePicView;
-    @Bind(R.id.user_name) TextView usernameView;
-    @Bind(R.id.description_box) ExpandableTextView descriptionView;
-    @Bind(R.id.arrow) ImageView arrowView;
-    @Bind(R.id.custom_indicator) PagerIndicator pagerIndicator;
-    @Bind(R.id.suggestions_slider) SliderLayout suggestionsSlider;
-    @Bind(R.id.ad_type) TextView adTypeView;
-    @Bind(R.id.offer_book_button) RecycleBinView offerButton;
-    @Bind(R.id.about_user) CardView aboutUserCardView;
-    @Bind(R.id.exchange_row) TableRow exchangeRow;
-    @BindString(R.string.list_array_url) String jsonUrl;
-    @BindString(R.string.check_book_offer_status_url) String checkOfferUrl;
+public class DetailsActivity extends AppCompatActivity implements BaseSliderView.OnSliderClickListener {
+    @Bind(R.id.slider)
+    SliderLayout imageSlider;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.title)
+    TextView titleView;
+    @Bind(R.id.author)
+    TextView authorView;
+    @Bind(R.id.category)
+    TextView categoryView;
+    @Bind(R.id.condition)
+    TextView conditionView;
+    @Bind(R.id.location)
+    TextView locationView;
+    @Bind(R.id.exchange_item)
+    TextView exchangeItemView;
+    @Bind(R.id.email)
+    TextView emailView;
+    @Bind(R.id.mobile_number)
+    TextView mobileNumView;
+    @Bind(R.id.user_image)
+    CircleImageView profilePicView;
+    @Bind(R.id.user_name)
+    TextView usernameView;
+    @Bind(R.id.description_box)
+    ExpandableTextView descriptionView;
+    @Bind(R.id.arrow)
+    ImageView arrowView;
+    @Bind(R.id.custom_indicator)
+    PagerIndicator pagerIndicator;
+    @Bind(R.id.suggestions_title)
+    TextView suggestionsTitleView;
+    @Bind(R.id.suggestions_slider)
+    SliderLayout suggestionsSlider;
+    @Bind(R.id.ad_type)
+    TextView adTypeView;
+    @Bind(R.id.offer_book_button)
+    RecycleBinView offerButton;
+    @Bind(R.id.about_user)
+    CardView aboutUserCardView;
+    @Bind(R.id.exchange_row)
+    TableRow exchangeRow;
+    @Bind(R.id.offer_button_label)
+    TextView offerButtonLabelView;
+    @BindString(R.string.list_array_url)
+    String jsonUrl;
+    @BindString(R.string.check_book_offer_status_url)
+    String checkOfferUrl;
+    @BindString(R.string.offer_is_sent)
+    String offerIsSentText;
     private Book book;
-    private String TAG="Offer check request";
-    private ArrayList<Book> suggestionList=new ArrayList<>();
+    private String TAG = "Offer check request";
+    private ArrayList<Book> suggestionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +127,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        SpannableString title= new SpannableString(getResources().getString(R.string.title_activity_details));
+        SpannableString title = new SpannableString(getResources().getString(R.string.title_activity_details));
         title.setSpan(new TypeFaceSpan(this, "bpg_nino_mtavruli_bold.ttf"), 0, title.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         setTitle(title);
@@ -115,13 +140,12 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         overridePendingTransition(R.anim.slide_from_right, R.anim.slide_out_top);
         Animation scale_up = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.scale_up);
-        descriptionView.setInAnimation(scale_up);
-        book= (Book) getIntent().getSerializableExtra("book");
+        book = (Book) getIntent().getSerializableExtra("book");
         imageSlider.setCustomIndicator(pagerIndicator);
         setData(book);
 
         //hide indicators and stop sliding when there is 1 image
-        if(book.getPictures().size()==1){
+        if (book.getPictures().size() == 1) {
             imageSlider.stopAutoCycle();
             pagerIndicator.setVisibility(View.GONE);
             //stop touch sliding when there is one image
@@ -135,38 +159,42 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         }
 
         //hide image layout when no image is found
-        if(book.getPictures().get(0).equals("null")){
+        if (book.getPictures().get(0).equals("null")) {
             imageSlider.stopAutoCycle();
             pagerIndicator.setVisibility(View.GONE);
             imageSlider.setVisibility(View.GONE);
         }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         suggestionsSlider.stopAutoCycle();
-        getSuggestionsData(jsonUrl,book.getId(),suggestionList);
-        if(AccessToken.getCurrentAccessToken()!=null)
-        checkOfferStatus(checkOfferUrl,Profile.getCurrentProfile().getId(),book.getServer_id(),book.getAdType());
+        getSuggestionsData(jsonUrl, book.getId(), suggestionList);
+        if (AccessToken.getCurrentAccessToken() != null && Profile.getCurrentProfile()!=null){
+            if(!Profile.getCurrentProfile().getId().equals(book.getId()))
+            checkOfferStatus(checkOfferUrl, Profile.getCurrentProfile().getId(), book.getServer_id(), book.getAdType());
+        }
+
 
     }
 
 
     @OnClick(R.id.description_container)
-    public void onClick(View view){
+    public void onClick(View view) {
 
-        switch (descriptionView.getVisibility()){
+        switch (descriptionView.getVisibility()) {
             case View.GONE:
                 arrowView.setRotation(0);
                 descriptionView.setVisibility(View.VISIBLE);
-                rotate(90,arrowView);
+                rotate(90, arrowView);
                 break;
             case View.VISIBLE:
                 arrowView.setRotation(90);
                 descriptionView.setVisibility(View.GONE);
-                rotate(-90,arrowView);
-                default:
-                    break;
+                rotate(-90, arrowView);
+            default:
+                break;
         }
 
     }
+
     private void rotate(float degree, ImageView imgview) {
         final RotateAnimation rotateAnim = new RotateAnimation(0.0f, degree,
                 RotateAnimation.RELATIVE_TO_SELF, 0.5f,
@@ -176,41 +204,43 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         rotateAnim.setFillAfter(true);
         imgview.startAnimation(rotateAnim);
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
-    private void setData(Book book){
-        ArrayList<String> imgArray=book.getPictures();
-        for (int i = 0; i <imgArray.size() ; i++) {
-            DefaultSliderView textSliderView=new DefaultSliderView(this);
-            textSliderView.image(getResources().getString(R.string.picture_url)+imgArray.get(i)).setScaleType(BaseSliderView.ScaleType.CenterInside);
+
+    private void setData(Book book) {
+        ArrayList<String> imgArray = book.getPictures();
+        for (int i = 0; i < imgArray.size(); i++) {
+            DefaultSliderView textSliderView = new DefaultSliderView(this);
+            textSliderView.image(getResources().getString(R.string.picture_url) + imgArray.get(i)).setScaleType(BaseSliderView.ScaleType.CenterInside);
             imageSlider.addSlider(textSliderView);
 
         }
         titleView.setText(book.getTitle());
-        if(!book.getAuthor().isEmpty())
-        authorView.setText(book.getAuthor());
-        if(!book.getDescription().isEmpty())
-        descriptionView.setText(book.getDescription());
+        if (!book.getAuthor().isEmpty())
+            authorView.setText(book.getAuthor());
+        if (!book.getDescription().isEmpty())
+            descriptionView.setText(book.getDescription());
         conditionView.setText(CategoryArrays.conditions[Integer.parseInt(book.getCondition())]);
         categoryView.setText(CategoryArrays.categories[Integer.parseInt(book.getCategory())]);
-        if(!book.getLocation().isEmpty())
-        locationView.setText(book.getLocation());
-        if(book.getAdType().equals("2"))
+        if (!book.getLocation().isEmpty())
+            locationView.setText(book.getLocation());
+        if (book.getAdType().equals("2"))
             exchangeRow.setVisibility(View.GONE);
         exchangeItemView.setText(book.getExchangeItem());
-        if(!book.geteMail().isEmpty())
-        emailView.setText(book.geteMail());
-        if(!book.getMobileNum().isEmpty())
-        mobileNumView.setText(book.getMobileNum());
-        String adType=CategoryArrays.adTypes[Integer.parseInt(book.getAdType())];
+        if (!book.geteMail().isEmpty())
+            emailView.setText(book.geteMail());
+        if (!book.getMobileNum().isEmpty())
+            mobileNumView.setText(book.getMobileNum());
+        String adType = CategoryArrays.adTypes[Integer.parseInt(book.getAdType())];
         adTypeView.setText(adType);
-        if(book.getAdType().equals("2")){
+        if (book.getAdType().equals("2")) {
             exchangeItemView.setVisibility(View.GONE);
         }
         final String[] id = {""};
-        Picasso.with(this).load("https://graph.facebook.com/"+ book.getId()+"/picture?type=large").into(profilePicView);
+        Picasso.with(this).load("https://graph.facebook.com/" + book.getId() + "/picture?type=large").into(profilePicView);
 
         new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -222,7 +252,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
             /* handle the result */
                         Log.v("LoginActivity", response.toString());
                         try {
-                            if(response.getJSONObject()!=null) {
+                            if (response.getJSONObject() != null) {
                                 id[0] = response.getJSONObject().getString("name");
                                 usernameView.setText(id[0]);
                             }
@@ -234,13 +264,14 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         ).executeAsync();
 
     }
-    private void getSuggestionsData(String url, String id, final ArrayList<Book> list){
+
+    private void getSuggestionsData(String url, String id, final ArrayList<Book> list) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url+"/0/user_id/"+id, new Response.Listener<JSONArray>() {
+        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url + "/0/user_id/" + id, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray jsonArray) {
-                if(jsonArray.length()>1) {
+                if (jsonArray.length() > 1) {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = null;
@@ -249,11 +280,11 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if(i>5) break;
+                        if (i > 5) break;
                         //skip first Ad
                         try {
                             assert obj != null;
-                            if(!book.getTitle().equals(obj.getString("title"))) {
+                            if (!book.getTitle().equals(obj.getString("title"))) {
                                 try {
 
 
@@ -290,7 +321,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
                         }
                     }
                     createSuggestionSlider(list);
-                    if(list.size()==1){
+                    if (list.size() == 1) {
                         //stop sliding when there is one image
                         suggestionsSlider.setPagerTransformer(false, new BaseTransformer() {
                             @Override
@@ -302,8 +333,9 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
                     }
 
                 }
-                if(list.isEmpty()){
+                if (list.isEmpty()) {
                     suggestionsSlider.setVisibility(View.GONE);
+                    suggestionsTitleView.setVisibility(View.GONE);
                 }
             }
         },
@@ -322,13 +354,14 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
         requestQueue.add(jsonArrayRequest);
 
     }
-    private void createSuggestionSlider(final ArrayList<Book> list){
-        for (int i = 0; i <list.size() ; i++) {
-            TextSliderView textSliderView=new TextSliderView(this);
-            if(list.get(i).getPictures().get(0).equals("null")){
+
+    private void createSuggestionSlider(final ArrayList<Book> list) {
+        for (int i = 0; i < list.size(); i++) {
+            TextSliderView textSliderView = new TextSliderView(this);
+            if (list.get(i).getPictures().get(0).equals("null")) {
                 textSliderView.image(R.drawable.book_cover).setScaleType(BaseSliderView.ScaleType.CenterCrop);
 
-            }else {
+            } else {
                 textSliderView.image(getResources().getString(R.string.picture_url) + list.get(i).getFrontImageUrl()).setScaleType(BaseSliderView.ScaleType.CenterCrop);
             }
             textSliderView.description(list.get(i).getTitle());
@@ -344,11 +377,13 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
             suggestionsSlider.addSlider(textSliderView);
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
     }
+
     @Override
     protected void onStop() {
         imageSlider.stopAutoCycle();
@@ -361,31 +396,42 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     public void onSliderClick(BaseSliderView slider) {
 
     }
+
     @OnClick(R.id.offer_book_button)
-    public void onClickOffer(View view){
-        MyBookListDialog myBookListDialog=MyBookListDialog.newInstance(book.getId(),book.getServer_id());
-        myBookListDialog.show(getSupportFragmentManager(),"bookOffers");
+    public void onClickOffer(View view) {
+        MyBookListDialog myBookListDialog = MyBookListDialog.newInstance(book.getId(), book.getServer_id());
+        myBookListDialog.show(getSupportFragmentManager(), "bookOffers");
     }
 
     @Subscribe
-    public void onEvent(HideOfferButtonEvent event){
-        if(event.isMessageSent){
-            offerButton.setVisibility(View.GONE);
+    public void onEvent(HideOfferButtonEvent event) {
+        if (event.isMessageSent) {
+            disableOfferButton();
         }
     }
 
-     // Checks if offer is already sent for this book
-    private void checkOfferStatus(String url, final String myId, final String bookId, final String adType){
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
+    private void disableOfferButton() {
+        offerButton.setVisibility(View.VISIBLE);
+        offerButton.setOnClickListener(null);
+        offerButton.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
+        offerButtonLabelView.setText(offerIsSentText);
+    }
+
+    // Checks if offer is already sent for this book
+    private void checkOfferStatus(String url, final String myId, final String bookId, final String adType) {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
         StringRequest jsonArrayRequest = new StringRequest(Request.Method.POST,
                 url, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) {
 
-                   if(adType.equals("1") && response.equals("false")){
-                       offerButton.setVisibility(View.VISIBLE);
-                   }
+                if (adType.equals("1") && response.equals("false")) {
+                    offerButton.setVisibility(View.VISIBLE);
+                }
+                if (adType.equals("1") && response.equals("true")) {
+                    disableOfferButton();
+                }
 
             }
 

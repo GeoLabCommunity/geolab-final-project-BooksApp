@@ -39,6 +39,7 @@ public class GcmMessageHandler extends GcmListenerService {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(body)
+                .setTicker(body)
                 .setSound(defaultSoundUri)
                 .setContentIntent(contentIntent)
                 .setAutoCancel(true);

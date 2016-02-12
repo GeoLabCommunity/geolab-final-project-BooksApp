@@ -180,6 +180,7 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
                 JSONObject jsonResponse = new JSONObject(result);
 
                 mBuilder.setContentText(jsonResponse.getString("message"));
+                mBuilder.setTicker(jsonResponse.getString("message"));
                 // Removes the progress bar
                 mBuilder.setProgress(0, 0, false).setSmallIcon(R.drawable.ic_check);
                 mNotifyManager.notify(id, mBuilder.build());
@@ -191,11 +192,9 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
             Intent intent=new Intent(context,UploadRetryReceiver.class);
             intent.putExtra("book",this.book);
             intent.putStringArrayListExtra("deletedImages",this.deletedImages);
-          /*  ArrayList<String> arrayList=new ArrayList<>();
-            arrayList.add("davigaleee");
-            intent.putStringArrayListExtra("picList",arrayList);*/
             PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             mBuilder.setContentText("სერვერთან კავშირი არ დამყარდა");
+            mBuilder.setTicker("სერვერთან კავშირი არ დამყარდა");
             // Removes the progress bar
             mBuilder.setProgress(0, 0, false);
             mBuilder.addAction(R.drawable.ic_retry, "სცადეთ თავიდან", pIntent);

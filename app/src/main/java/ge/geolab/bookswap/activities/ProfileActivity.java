@@ -148,7 +148,6 @@ public class ProfileActivity extends AppCompatActivity {
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url+"0/user_id/"+id, new Response.Listener<JSONArray>() {
 
 
-
             @Override
             public void onResponse(JSONArray jsonArray) {
                        list.clear();
@@ -205,8 +204,15 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("Volley=>", "Error: " + error.getMessage());
                          refreshLayout.setRefreshing(false);
-                        // hide the progress dialog
-                        // hidepDialog();
+
+                        //Retry sending request
+                        displaySnackbar(getResources().getString(R.string.fb_error_snackbar_msg), "RETRY", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                getSuggestionsData(jsonUrl, Profile.getCurrentProfile().getId(),bookList,profileListAdapter);
+                            }
+                        });
+
 
                     }
                 });
@@ -217,8 +223,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void displaySnackbar(String text, String actionName, View.OnClickListener action) {
         Snackbar snack = Snackbar.make(bookListView, text, Snackbar.LENGTH_INDEFINITE)
                 .setAction(actionName, action);
-
-
 
         snack.show();
     }
@@ -258,12 +262,9 @@ public class ProfileActivity extends AppCompatActivity {
                                 removeBook(book);
                             }
                         });
-                        // hide the progress dialog
-                        // hidepDialog();
 
                     }
                 });
-        //jsonArrayRequest.setTag("REQUEST");
         requestQueue.add(jsonArrayRequest);
     }
 }

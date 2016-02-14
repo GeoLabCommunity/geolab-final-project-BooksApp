@@ -48,7 +48,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:text="@string/author"
                     style="@style/add_book_text"/>
                 <TextView
@@ -56,7 +56,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:layout_marginTop="@dimen/details_view_margin_top"
                     android:text="@string/blank"
                     style="@style/add_book_text"/>
@@ -65,7 +65,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:text="@string/category"
                     style="@style/add_book_text"/>
                 <TextView
@@ -73,15 +73,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:layout_marginTop="@dimen/details_view_margin_top"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     style="@style/add_book_text"/>
             </TableRow>
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:text="@string/condition"
                     style="@style/add_book_text"/>
                 <TextView
@@ -89,7 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:layout_marginTop="@dimen/details_view_margin_top"
                     style="@style/add_book_text"/>
             </TableRow>
@@ -97,7 +99,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:text="@string/location"
                     style="@style/add_book_text"/>
                 <TextView
@@ -105,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:layout_marginTop="@dimen/details_view_margin_top"
                     android:text="@string/blank"
                     style="@style/add_book_text"/>
@@ -115,7 +117,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:text="@string/exchange"
                     style="@style/add_book_text"/>
                 <TextView
@@ -124,14 +126,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/details_view_margin_top"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     style="@style/add_book_text"/>
             </TableRow>
             <TableRow>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:text="@string/type_of_ad"
                     style="@style/add_book_text"/>
                 <TextView
@@ -139,7 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     style="@style/add_book_text"/>
             </TableRow>
             <TextView
@@ -147,7 +149,7 @@
                 android:text="@string/contact_information"
                 android:textStyle="bold"
                 android:layout_marginTop="@dimen/details_view_margin_top"
-                android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                 style="@style/contact_information_title_text" />
             <TableRow>
                 <ImageView
@@ -159,7 +161,7 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:layout_gravity="bottom|center_horizontal"
                     android:text="@string/blank"
                     style="@style/add_book_text"
@@ -176,7 +178,7 @@
                     android:id="@+id/mobile_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:layout_gravity="bottom|center_horizontal"
                     android:text="@string/blank"
                     style="@style/add_book_text"
@@ -198,7 +200,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                    android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                     android:layout_weight=".8"
                     android:layout_gravity="center"
                     android:text="@string/details_of_book"
@@ -215,7 +217,7 @@
                 android:id="@+id/description_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
                 android:layout_marginBottom="10dp"
                 android:visibility="gone"
                 android:text="@string/description_not_found"/>
@@ -257,12 +259,24 @@
                 style="@style/username_text"
                 android:text="@string/other_books"
                 />
+            <com.wang.avi.AVLoadingIndicatorView
+                android:id="@+id/IndicatorView"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginRight="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginTop="@dimen/details_view_margin_top"
+                android:layout_marginBottom="@dimen/details_view_margin_top"
+                app:indicator="BallScaleMultiple"
+                app:indicator_color="@color/colorAccent" />
             <com.daimajia.slider.library.SliderLayout
                 android:id="@+id/suggestions_slider"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/image_slider_height"
-                android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
-                android:layout_marginEnd="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginLeft="@dimen/add_layout_second_column_left_margin"
+                android:layout_marginRight="@dimen/add_layout_second_column_left_margin"
                 android:layout_marginTop="@dimen/details_view_margin_top"
                 android:layout_marginBottom="@dimen/details_view_margin_top"
                 android:layout_gravity="center_horizontal"

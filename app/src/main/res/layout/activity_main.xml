@@ -50,8 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_add"
-        android:scaleType="centerCrop"
+        android:src="@drawable/ic_add_black_24dp"
         app:backgroundTint="@color/colorAccent"
         app:layout_behavior="ge.geolab.bookswap.views.layoutBehaviors.ScrollAwareFABBehavior"
         />

@@ -135,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
                 //user data, and launch the main activity afterwards. If my user has just logged in,
                 //I make sure to update his information before launching the main Activity.
 
-                Log.i("FB Profile Changed", profile1.getId());
                 Profile.setCurrentProfile(profile1);
                 setUserUI();
 
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(MainActivityViewPager);
         setNavigationMenuItemListeners();
 
-
+        setUserUI();
         if (checkPlayServices() && Profile.getCurrentProfile()!=null) {
             // Start IntentService to register this application with GCM.
             Intent intent = new Intent(this, RegistrationIntentService.class);

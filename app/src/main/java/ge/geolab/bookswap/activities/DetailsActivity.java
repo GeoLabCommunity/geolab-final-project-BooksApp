@@ -41,6 +41,7 @@ import com.facebook.HttpMethod;
 import com.facebook.Profile;
 import com.google.common.eventbus.Subscribe;
 import com.squareup.picasso.Picasso;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -111,6 +112,8 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     TableRow exchangeRow;
     @Bind(R.id.offer_button_label)
     TextView offerButtonLabelView;
+    @Bind(R.id.IndicatorView)
+    AVLoadingIndicatorView indicatorView;
     @BindString(R.string.list_array_url)
     String jsonUrl;
     @BindString(R.string.check_book_offer_status_url)
@@ -267,10 +270,12 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
 
     private void getSuggestionsData(String url, String id, final ArrayList<Book> list) {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
+        indicatorView.setVisibility(View.VISIBLE);
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url + "/0/user_id/" + id, new Response.Listener<JSONArray>() {
 
             @Override
             public void onResponse(JSONArray jsonArray) {
+                indicatorView.setVisibility(View.GONE);
                 if (jsonArray.length() > 1) {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -344,7 +349,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         VolleyLog.d("Volley=>", "Error: " + error.getMessage());
-
+                         indicatorView.setVisibility(View.GONE);
                         // hide the progress dialog
                         // hidepDialog();
 

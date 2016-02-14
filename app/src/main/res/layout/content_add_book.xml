@@ -27,7 +27,8 @@
                    android:id="@+id/ad_type"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_marginStart="@dimen/add_layout_second_column_left_margin"/>
+                   android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                   style="@style/customSpinnerTheme"/>
            </TableRow>
            <TableRow>
         <TextView
@@ -67,7 +68,8 @@
                    android:id="@+id/category_spinner"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_marginStart="@dimen/add_layout_second_column_left_margin"/>
+                   android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                   style="@style/customSpinnerTheme"/>
            </TableRow>
            <TableRow>
                <TextView
@@ -82,6 +84,7 @@
                    android:layout_height="wrap_content"
                    android:layout_marginTop="10dp"
                    android:layout_marginStart="@dimen/add_layout_second_column_left_margin"
+                   style="@style/customSpinnerTheme"
                    />
            </TableRow>
            <TableRow>

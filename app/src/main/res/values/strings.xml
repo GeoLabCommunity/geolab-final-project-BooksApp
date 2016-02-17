@@ -33,6 +33,7 @@
     <string name="validate.title">საჭიროა წიგნის დასახელება</string>
     <string name="validate.exchange_item">საჭიროა გასაცვლელი წიგნის დასახელება</string>
     <string name="validate.pictures">საჭიროა ერთი სურათი მაინც</string>
+    <string name="validate.contact_info">საჭიროა ელ. ფოსტის მისამართი ან ტელეფონის ნომერი</string>
     <string name="list_array_url">http://geolab.club/streetart/index.php/welcome/select/0/</string>
     <string name="picture_url">http://geolab.club/streetart/uploads/</string>
     <string name="details_of_book">წიგნის დეტალური დახასიათება</string>

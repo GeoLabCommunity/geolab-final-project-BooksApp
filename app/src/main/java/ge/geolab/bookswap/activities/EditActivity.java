@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -40,6 +41,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.pnikosis.materialishprogress.ProgressWheel;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
@@ -78,7 +80,7 @@ import okio.Okio;
 import okio.Sink;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class EditActivity extends AppCompatActivity implements View.OnLongClickListener {
+public class EditActivity extends AppCompatActivity implements View.OnLongClickListener,View.OnTouchListener {
     @Bind(R.id.input_book_title)
     EditText inputTitle;
     @Bind(R.id.input_book_description)
@@ -111,6 +113,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
     LinearLayout picContainer;
     @Bind(R.id.recycle_bin)
     RecycleBinView recycleBin;
+    @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
     @BindString(R.string.picture_url) String pictureUrl;
     private Uri fileUri;
     private static final int MEDIA_TYPE_IMAGE = 1;
@@ -239,6 +242,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
             final ImageView imageView=new ImageView(context);
             imageView.setId(id);
             imageView.setOnLongClickListener((View.OnLongClickListener) context);
+            imageView.setOnTouchListener((View.OnTouchListener) context);
             deletedItemsMap.put(id, editBook.getPictures().get(i));
             picContainer.addView(imageView);
             Picasso picasso = Picasso.with(context);
@@ -394,7 +398,11 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
         bookAd.setExchangeItem(exchangeItem);
         bookAd.setLocation(location);
         bookAd.seteMail(email);
-        bookAd.setMobileNum(mobileNum);
+        if(mobileNum.equals("+995")){
+            bookAd.setMobileNum("");
+        }else{
+            bookAd.setMobileNum(mobileNum);
+        }
         bookAd.setPictures(pictureArray);
         bookAd.setServer_id(editBook.getServer_id());
 
@@ -413,6 +421,10 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
 
         if (inputExchange.getVisibility() == View.VISIBLE && inputExchange.getText().toString().length() == 0) {
             inputExchange.setError(getString(R.string.validate_exchange_item));
+            validChecks.add(false);
+        }
+        if(inputMobileNum.getText().length()==4 && inputEmail.getText().length()==0){
+            inputEmail.setError(getString(R.string.validate_contact_info));
             validChecks.add(false);
         }
         for (int i = 0; i < validChecks.size(); i++) {
@@ -453,6 +465,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
             final ImageView imageView = setPicture(selectedImage);
             imageView.setId(id);
             imageView.setOnLongClickListener(this);
+            imageView.setOnTouchListener(this);
             picContainer.addView(imageView);
 
         }
@@ -464,6 +477,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
                 imageView.setId(id);
                 pictureMap.put(id, fileUri.getPath());
                 imageView.setOnLongClickListener(this);
+                imageView.setOnTouchListener(this);
                 picContainer.addView(imageView);
 
 
@@ -562,6 +576,33 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
         recycleBin.setVisibility(View.VISIBLE);
         return true;
 
+    }
+    @Override
+    public boolean onTouch(final View v, MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                progressWheel.setProgress(0.0f);
+                progressWheel.setVisibility(View.VISIBLE);
+                progressWheel.setCallback(new ProgressWheel.ProgressCallback() {
+                    @Override
+                    public void onProgressUpdate(float progress) {
+                        if(progress == 0)
+                            progressWheel.setProgress(1.0f);
+                        if(progress==1.0f) {
+                            progressWheel.resetCount();
+                            progressWheel.setVisibility(View.GONE);
+                            v.performLongClick();
+                        }
+                    }
+                });
+
+                break;
+            case MotionEvent.ACTION_UP:
+                progressWheel.resetCount();
+                progressWheel.setVisibility(View.GONE);
+                break;
+        }
+        return true;
     }
 
 }

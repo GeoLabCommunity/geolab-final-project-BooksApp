@@ -338,9 +338,9 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
                     }
 
                 }
-                if (list.isEmpty()) {
-                    suggestionsSlider.setVisibility(View.GONE);
-                    suggestionsTitleView.setVisibility(View.GONE);
+                if (!list.isEmpty()) {
+                    suggestionsSlider.setVisibility(View.VISIBLE);
+                    suggestionsTitleView.setVisibility(View.VISIBLE);
                 }
             }
         },

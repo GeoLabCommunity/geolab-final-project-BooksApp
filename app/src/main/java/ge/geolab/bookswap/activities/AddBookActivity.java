@@ -45,6 +45,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.pnikosis.materialishprogress.ProgressWheel;
 
 
 import java.io.ByteArrayOutputStream;
@@ -69,7 +70,7 @@ import ge.geolab.bookswap.utils.UnitConverters;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class AddBookActivity extends AppCompatActivity implements View.OnLongClickListener {
+public class AddBookActivity extends AppCompatActivity implements View.OnLongClickListener,View.OnTouchListener {
     @Bind(R.id.input_book_title) EditText inputTitle;
     @Bind(R.id.input_book_description) EditText inputDescription;
     @Bind(R.id.input_author) EditText inputAuthor;
@@ -86,6 +87,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
     @Bind(R.id.add_from_gallery) FloatingActionButton fabGallery;
     @Bind(R.id.pic_container) LinearLayout picContainer;
     @Bind(R.id.recycle_bin) RecycleBinView recycleBin;
+    @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
     private Uri fileUri;
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
@@ -291,7 +293,11 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
         bookAd.setExchangeItem(exchangeItem);
         bookAd.setLocation(location);
         bookAd.seteMail(email);
-        bookAd.setMobileNum(mobileNum);
+        if(mobileNum.equals("+995")){
+            bookAd.setMobileNum("");
+        }else{
+            bookAd.setMobileNum(mobileNum);
+        }
         bookAd.setPictures(pictureArray);
 
     }
@@ -308,6 +314,10 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
 
         if(inputExchange.getVisibility()==View.VISIBLE && inputExchange.getText().toString().length() == 0){
             inputExchange.setError(getString(R.string.validate_exchange_item));
+            validChecks.add(false);
+        }
+        if(inputMobileNum.getText().length()==4 && inputEmail.getText().length()==0){
+            inputEmail.setError(getString(R.string.validate_contact_info));
             validChecks.add(false);
         }
         for (int i = 0; i <validChecks.size() ; i++) {
@@ -344,7 +354,8 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
                 pictureMap.put(id,getRealPathFromURI(selectedImage));
                 final ImageView imageView=setPicture(selectedImage);
                 imageView.setId(id);
-                 imageView.setOnLongClickListener(this);
+                imageView.setOnLongClickListener(this);
+                imageView.setOnTouchListener(this);
                 picContainer.addView(imageView);
 
         }
@@ -355,7 +366,8 @@ public class AddBookActivity extends AppCompatActivity implements View.OnLongCli
                     id++;
                     imageView.setId(id);
                     pictureMap.put(id,fileUri.getPath());
-                     imageView.setOnLongClickListener(this);
+                    imageView.setOnLongClickListener(this);
+                    imageView.setOnTouchListener(this);
                     picContainer.addView(imageView);
 
 
@@ -467,4 +479,32 @@ public boolean onCreateOptionsMenu(Menu menu) {
 
     }
 
+
+    @Override
+    public boolean onTouch(final View v, MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                progressWheel.setProgress(0.0f);
+                progressWheel.setVisibility(View.VISIBLE);
+                progressWheel.setCallback(new ProgressWheel.ProgressCallback() {
+                    @Override
+                    public void onProgressUpdate(float progress) {
+                        if(progress == 0)
+                            progressWheel.setProgress(1.0f);
+                        if(progress==1.0f) {
+                            progressWheel.resetCount();
+                            progressWheel.setVisibility(View.GONE);
+                            v.performLongClick();
+                        }
+                    }
+                });
+
+                break;
+            case MotionEvent.ACTION_UP:
+                progressWheel.resetCount();
+                progressWheel.setVisibility(View.GONE);
+                break;
+        }
+        return true;
+    }
 }

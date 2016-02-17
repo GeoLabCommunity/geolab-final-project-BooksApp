@@ -258,6 +258,7 @@
                 android:layout_gravity="center_horizontal"
                 style="@style/username_text"
                 android:text="@string/other_books"
+                android:visibility="gone"
                 />
             <com.wang.avi.AVLoadingIndicatorView
                 android:id="@+id/IndicatorView"
@@ -280,6 +281,7 @@
                 android:layout_marginTop="@dimen/details_view_margin_top"
                 android:layout_marginBottom="@dimen/details_view_margin_top"
                 android:layout_gravity="center_horizontal"
+                android:visibility="gone"
                 />
         </LinearLayout>
     </android.support.v7.widget.CardView>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -30,6 +31,17 @@
             android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_delete"/>
     </ge.geolab.bookswap.views.customViews.RecycleBinView>
+
+    <com.pnikosis.materialishprogress.ProgressWheel
+        android:id="@+id/progress_wheel"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        wheel:matProg_barColor="@color/colorAccent"
+        wheel:matProg_progressIndeterminate="true"
+        wheel:matProg_linearProgress="true"
+        wheel:matProg_spinSpeed="2"/>
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,7 +63,7 @@
         android:layout_margin="@dimen/fab_menu_margin"
         fab:menu_icon="@drawable/ic_add_photo"
         fab:fab_addButtonColorNormal="@color/colorAccent"
-        fab:fab_addButtonColorPressed="@color/white_pressed"
+        fab:fab_addButtonColorPressed="@color/darkOrange"
         fab:fab_addButtonPlusIconColor="@color/lightGray"
         fab:fab_labelStyle="@style/fab_menu_labels_style"
          >
@@ -63,7 +75,7 @@
             fab:fab_size="mini"
             fab:fab_title="@string/gallery"
             fab:fab_icon="@drawable/ic_gallery"
-            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_colorPressed="@color/darkOrange"
             />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -74,7 +86,7 @@
             fab:fab_size="mini"
             fab:fab_title="@string/camera"
             fab:fab_icon="@drawable/ic_camera"
-            fab:fab_colorPressed="@color/white_pressed"/>
+            fab:fab_colorPressed="@color/darkOrange"/>
       </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </android.support.design.widget.CoordinatorLayout>

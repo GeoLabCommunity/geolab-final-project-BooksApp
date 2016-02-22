@@ -62,6 +62,7 @@ import ge.geolab.bookswap.events.HideOfferButtonEvent;
 import ge.geolab.bookswap.fragments.MyBookListDialog;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.utils.CategoryArrays;
+import ge.geolab.bookswap.utils.TextTransformer;
 import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.views.customViews.ExpandableTextView;
 import ge.geolab.bookswap.views.customViews.RecycleBinView;
@@ -369,7 +370,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
             } else {
                 textSliderView.image(getResources().getString(R.string.picture_url) + list.get(i).getFrontImageUrl()).setScaleType(BaseSliderView.ScaleType.CenterCrop);
             }
-            textSliderView.description(list.get(i).getTitle());
+            textSliderView.description(TextTransformer.ellipsize(list.get(i).getTitle(),10));
             final int finalI = i;
             textSliderView.setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
                 @Override

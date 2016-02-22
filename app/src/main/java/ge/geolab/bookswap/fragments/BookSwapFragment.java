@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.common.eventbus.Subscribe;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +40,7 @@ import de.greenrobot.event.EventBus;
 import ge.geolab.bookswap.R;
 import ge.geolab.bookswap.activities.DetailsActivity;
 import ge.geolab.bookswap.events.ClearSavedInstanceEvent;
+import ge.geolab.bookswap.events.RefreshListEvent;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.utils.ConnectionDetector;
 import ge.geolab.bookswap.views.adapters.BookAdListAdapter;
@@ -102,7 +104,18 @@ public class BookSwapFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override
@@ -111,6 +124,7 @@ public class BookSwapFragment extends Fragment {
         Icepick.restoreInstanceState(this, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_swap, container, false);
         ButterKnife.bind(this, rootView);
+        EventBus.getDefault().register(this);
         context = getActivity().getApplicationContext();
         adTypeIndex = getArguments().getInt(ARG_SECTION_NUMBER);
         final int columns = getResources().getInteger(R.integer.gallery_columns);
@@ -147,12 +161,10 @@ public class BookSwapFragment extends Fragment {
                 scrollListener.reset();
             }
         });
-        // cacheJson();
 
         ItemClickSupport.addTo(bookAdListView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                // do it
                 Intent intent = new Intent(context, DetailsActivity.class);
                 intent.putExtra("book", bookAdList.get(position));
                 startActivity(intent);
@@ -175,7 +187,7 @@ public class BookSwapFragment extends Fragment {
         super.onSaveInstanceState(outState);
         Icepick.saveInstanceState(this, outState);
     }
-
+    @Subscribe
     public void onEvent(ClearSavedInstanceEvent event) {
         if (event.isCategorySelected) {
             lastItemIdInJson = "0";
@@ -185,7 +197,14 @@ public class BookSwapFragment extends Fragment {
             scrollListener.reset();
         }
     }
-
+    @Subscribe
+    public void onEvent(RefreshListEvent event){
+        if(event.isEntryAdded) {
+            lastItemIdInJson = "0";
+            fetchJsonData(requestQueue, parseUrl(jsonArrayUrl, lastItemIdInJson, categoryId, adTypeIndex), bookAdList, adapter, refreshLayout);
+            scrollListener.reset();
+        }
+    }
     private String parseUrl(String url, String lastId, int categoryId, int typeId) {
 
         return url + lastId + "/category_id/" + categoryId + "/type/" + typeId;
@@ -407,10 +426,6 @@ public class BookSwapFragment extends Fragment {
         public abstract void onLoadMore(int page, int totalItemsCount);
     }
 
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
+
 
 }

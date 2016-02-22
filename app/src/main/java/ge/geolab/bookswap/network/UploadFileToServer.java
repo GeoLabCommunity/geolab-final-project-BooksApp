@@ -1,30 +1,22 @@
 package ge.geolab.bookswap.network;
 
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -41,10 +33,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ge.geolab.bookswap.R;
-import ge.geolab.bookswap.activities.MainActivity;
+import ge.geolab.bookswap.events.RefreshListEvent;
 import ge.geolab.bookswap.models.Book;
-import okhttp3.OkHttpClient;
-import okio.Okio;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by dalkh on 30-Dec-15.
@@ -184,7 +175,8 @@ public class UploadFileToServer extends AsyncTask<Void, Integer, String> {
                 // Removes the progress bar
                 mBuilder.setProgress(0, 0, false).setSmallIcon(R.drawable.ic_check);
                 mNotifyManager.notify(id, mBuilder.build());
-
+                //update list
+                EventBus.getDefault().post(new RefreshListEvent(true));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -41,7 +41,9 @@ import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import co.dift.ui.SwipeToAction;
+import de.greenrobot.event.EventBus;
 import ge.geolab.bookswap.R;
+import ge.geolab.bookswap.events.RefreshListEvent;
 import ge.geolab.bookswap.models.Book;
 import ge.geolab.bookswap.utils.TypeFaceSpan;
 import ge.geolab.bookswap.utils.UnitConverters;
@@ -245,6 +247,8 @@ public class ProfileActivity extends AppCompatActivity {
                 bookList.remove(book);
                 profileListAdapter.notifyItemRemoved(position);
                 Snackbar.make(bookListView,book.getTitle()+" წაიშალა",Snackbar.LENGTH_LONG).show();
+                //update list
+                EventBus.getDefault().post(new RefreshListEvent(true));
 
             }
 

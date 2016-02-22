@@ -423,7 +423,7 @@ public class EditActivity extends AppCompatActivity implements View.OnLongClickL
             inputExchange.setError(getString(R.string.validate_exchange_item));
             validChecks.add(false);
         }
-        if(inputMobileNum.getText().length()==4 && inputEmail.getText().length()==0){
+        if(inputMobileNum.getText().length()==0 && inputEmail.getText().length()==0){
             inputEmail.setError(getString(R.string.validate_contact_info));
             validChecks.add(false);
         }

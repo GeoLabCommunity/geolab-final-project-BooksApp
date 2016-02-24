@@ -3,7 +3,7 @@
     android:padding="10dp"
     android:shape="rectangle" >
 
-    <solid android:color="@color/spinner_item_background" />
+    <solid android:color="@color/transparent_cyan" />
     <corners
         android:bottomLeftRadius="3dp"
         android:bottomRightRadius="3dp"

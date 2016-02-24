@@ -419,7 +419,7 @@ public class DetailsActivity extends AppCompatActivity implements BaseSliderView
     private void disableOfferButton() {
         offerButton.setVisibility(View.VISIBLE);
         offerButton.setOnClickListener(null);
-        offerButton.setBackgroundColor(getResources().getColor(R.color.transparent_gray));
+        offerButton.setBackgroundColor(getResources().getColor(R.color.transparent_cyan));
         offerButtonLabelView.setText(offerIsSentText);
     }
 
